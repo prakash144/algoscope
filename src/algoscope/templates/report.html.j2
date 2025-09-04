@@ -4,141 +4,584 @@
   <meta charset="utf-8"/>
   <title>{{ title }}</title>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
+
+  <!-- Google font & Material icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <!-- AOS (Animate on Scroll) -->
+  <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
   <style>
-    body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; color: #222; }
-    h1, h2, h3 { margin: 0.6em 0; }
-    .grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
-    .card { border: 1px solid #eee; border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #eee; }
-    .muted { color: #666; }
-    .pill { display: inline-block; padding: 2px 8px; border-radius: 12px; background: #f5f5f5; font-size: 12px;}
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
-    .two-col { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 16px; }
-    @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
-    .footer { margin-top: 40px; font-size: 12px; color: #888; }
-    .code { background: #fafafa; border: 1px solid #eee; padding: 10px; border-radius: 8px; white-space: pre-wrap; }
+    :root{
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --accent: #3366ff;
+      --accent-2: #00bfa6;
+      --glass: rgba(255,255,255,0.6);
+      --radius: 12px;
+      --shadow-sm: 0 4px 12px rgba(18,24,40,0.06);
+      --shadow-md: 0 8px 30px rgba(18,24,40,0.08);
+      --max-width: 1200px;
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #f6f8fb 0%, #eef2ff 100%);
+      color: #0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding: 20px;
+      display:flex;
+      justify-content:center;
+    }
+
+    .container{
+      width:100%;
+      max-width:var(--max-width);
+      margin: 12px;
+    }
+
+    header.topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom:18px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .logo{
+      width:52px;
+      height:52px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,var(--accent),#6b8cff);
+      color:white;
+      border-radius:12px;
+      box-shadow:var(--shadow-sm);
+      font-weight:700;
+      font-size:20px;
+    }
+    .title-block h1{
+      margin:0;
+      font-size:18px;
+      font-weight:700;
+      letter-spacing: -0.2px;
+    }
+    .title-block p{ margin:0; color:var(--muted); font-size:13px; }
+
+    .actions{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .btn{
+      background:var(--card);
+      border:1px solid rgba(13,18,36,0.06);
+      padding:8px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      box-shadow:var(--shadow-sm);
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-weight:600;
+      color:#0f172a;
+    }
+    .btn.primary{
+      background: linear-gradient(90deg,var(--accent), #5c7cff);
+      color:white;
+      border:none;
+      box-shadow:var(--shadow-md);
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    /* layout */
+    .content {
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+
+    /* summary cards row */
+    .summary-row{
+      display:grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 12px;
+    }
+    @media (max-width:980px){ .summary-row{ grid-template-columns: 1fr 1fr; } }
+    @media (max-width:640px){ .summary-row{ grid-template-columns: 1fr; } }
+
+    .card{
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(15,23,42,0.04);
+    }
+
+    .card h3{ margin:0 0 8px 0; font-size:14px; }
+    .card p { margin:0; color:var(--muted); font-size:13px; }
+
+    .stat{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .stat .icon{
+      background: linear-gradient(135deg,var(--accent), #6b8cff);
+      color: white;
+      width:44px;
+      height:44px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      font-size:20px;
+      box-shadow:var(--shadow-sm);
+    }
+    .stat .value{ font-size:18px; font-weight:700; }
+    .stat .label{ color:var(--muted); font-size:12px; }
+
+    /* tabs */
+    .tabs{
+      display:flex;
+      gap:8px;
+      padding: 8px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.45));
+      border-radius: 999px;
+      border: 1px solid rgba(15,23,42,0.04);
+    }
+    .tab{
+      padding:10px 14px;
+      border-radius: 999px;
+      cursor:pointer;
+      color:var(--muted);
+      font-weight:600;
+      font-size:13px;
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+    }
+    .tab.active{
+      background: linear-gradient(90deg,var(--accent), #6b8cff);
+      color:white;
+      box-shadow:var(--shadow-md);
+    }
+
+    /* main area */
+    .panel{
+      display:none;
+      animation: fadeIn 280ms ease both;
+    }
+    .panel.active{ display:block; }
+
+    @keyframes fadeIn {
+      from { opacity:0; transform: translateY(6px); }
+      to { opacity:1; transform: none; }
+    }
+
+    /* table styles */
+    table {
+      width:100%;
+      border-collapse: collapse;
+      font-size:13px;
+    }
+    thead th {
+      text-align:left;
+      font-size:12px;
+      color:var(--muted);
+      padding:10px 8px;
+      border-bottom:1px solid rgba(15,23,42,0.06);
+    }
+    tbody td{
+      padding:10px 8px;
+      border-bottom:1px dashed rgba(15,23,42,0.04);
+    }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, "Roboto Mono", monospace; font-size:13px; }
+
+    /* small badges */
+    .badge {
+      display:inline-block;
+      padding:6px 8px;
+      border-radius:8px;
+      background:#f2f4ff;
+      color:var(--accent);
+      font-weight:700;
+      font-size:12px;
+    }
+
+    /* code box */
+    .code {
+      background: linear-gradient(180deg,#fbfdff, #f6f8ff);
+      border:1px solid rgba(15,23,42,0.04);
+      padding:12px;
+      border-radius:10px;
+      white-space:pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, "Roboto Mono", monospace;
+      font-size:13px;
+      color:#0f172a;
+    }
+
+    /* small utilities */
+    .muted { color:var(--muted); }
+    .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width:860px){ .grid-2{ grid-template-columns: 1fr; } }
+
+    footer.footer{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+    }
+
+    /* hover effects for rows */
+    tbody tr:hover{ background: linear-gradient(90deg, rgba(51,102,255,0.03), rgba(0,191,166,0.01)); }
+
+    /* small responsive tweaks */
+    @media (max-width:520px){
+      .title-block h1{ font-size:16px; }
+      .btn{ padding:8px; font-size:13px; }
+    }
   </style>
+
 </head>
 <body>
-  <h1>{{ title }}</h1>
-  {% if notes %}
-  <div class="card">{{ notes }}</div>
-  {% endif %}
+  <div class="container" data-aos="fade-up">
+    <header class="topbar">
+      <div class="brand">
+        <div class="logo">A</div>
+        <div class="title-block">
+          <h1>{{ title }}</h1>
+          <p class="muted">Interactive algorithm analysis & benchmarking — generated by <strong>algoscope</strong></p>
+        </div>
+      </div>
 
-  <div class="grid">
-    <div class="card">
-      <h2>Manual Big-O Analysis</h2>
-      {% for label, md in manual_complexities.items() %}
-        <h3>{{ label }}</h3>
-        <div class="code">{{ md }}</div>
-      {% endfor %}
+      <div class="actions">
+        {% if html_path %}
+          <a class="btn" href="file://{{ html_path }}" title="Open report file locally">
+            <span class="material-icons">launch</span> Open
+          </a>
+        {% endif %}
+        <button class="btn primary" id="downloadBtn" title="Download report (HTML)">
+          <span class="material-icons">download</span> Download
+        </button>
+      </div>
+    </header>
+
+    {% if notes %}
+    <div class="card" data-aos="fade-right">
+      <h3>Notes</h3>
+      <p class="muted">{{ notes }}</p>
     </div>
+    {% endif %}
 
-    <div class="card">
-      <h2>Beginner-friendly Summary</h2>
-      {% for label, s in beginner_summaries.items() %}
-        <p><span class="pill">{{ label }}</span> {{ s }}</p>
-      {% endfor %}
-    </div>
+    <!-- Summaries -->
+    <section class="summary-row" aria-label="Summaries">
+      <div class="card" data-aos="fade-right" data-aos-delay="50">
+        <h3>Beginner Summary</h3>
+        {% for label, s in beginner_summaries.items() %}
+          <div style="margin-top:8px;">
+            <div style="display:flex; align-items:center; justify-content:space-between;">
+              <div>
+                <div class="badge">{{ label }}</div>
+                <p class="muted" style="margin-top:6px;">{{ s }}</p>
+              </div>
+              <div style="text-align:right;">
+                <div class="stat" style="justify-content:flex-end;">
+                  <div class="icon"><span class="material-icons">insights</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
 
-    <div class="card">
-      <h2>Interview-style Summaries</h2>
-      <ul>
-      {% for label, s in interview_summaries.items() %}
-        <li><span class="pill">{{ label }}</span> {{ s }}</li>
-      {% endfor %}
-      </ul>
-    </div>
-
-    <div class="card">
-      <h2>Runtime Benchmarks</h2>
-      <div id="runtime">{{ runtime_div | safe }}</div>
-      <h3>Table (mean ± 95% CI)</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>n</th>
-            {% for label, _ in manual_complexities.items() %}
-              <th>{{ label }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in runtime_table %}
-            <tr>
-              <td class="mono">{{ row.n }}</td>
-              {% for label, _ in manual_complexities.items() %}
-                {% set c = row[label] %}
-                <td class="mono">{{ c.mean | human_time }} ± {{ ((c.upper - c.lower)/2) | human_time }}</td>
-              {% endfor %}
-            </tr>
+      <div class="card" data-aos="fade-up" data-aos-delay="100">
+        <h3>Interview Summary</h3>
+        <div style="margin-top:8px;">
+          {% for label, s in interview_summaries.items() %}
+            <div style="margin-bottom:10px;">
+              <div style="display:flex; gap:10px; align-items:flex-start;">
+                <div style="flex:1;">
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="badge">{{ label }}</div>
+                    <div class="muted" style="font-weight:700;">Quick</div>
+                  </div>
+                  <p class="muted" style="margin-top:6px;">{{ s }}</p>
+                </div>
+              </div>
+            </div>
           {% endfor %}
-        </tbody>
-      </table>
-    </div>
+        </div>
+      </div>
 
-    <div class="card">
-      <h2>Peak Memory (per call)</h2>
-      <div id="memory">{{ memory_div | safe }}</div>
-      <h3>Table (mean ± 95% CI)</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>n</th>
-            {% for label, _ in manual_complexities.items() %}
-              <th>{{ label }}</th>
+      <div class="card" data-aos="fade-left" data-aos-delay="150">
+        <h3>Quick Stats</h3>
+        <div style="margin-top:8px;">
+          <div class="grid-2">
+            <div>
+              <div class="stat">
+                <div class="icon"><span class="material-icons">memory</span></div>
+                <div>
+                  <div class="value">{{ ns | length }}</div>
+                  <div class="label muted">Input sizes (n)</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="stat">
+                <div class="icon" style="background: linear-gradient(135deg,var(--accent-2), #4be8c9);">
+                  <span class="material-icons">timer</span>
+                </div>
+                <div>
+                  <div class="value">{{ runtime_table|length }} runs</div>
+                  <div class="label muted">Measured points</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:12px;">
+            <p class="muted">Use the tabs below to explore charts, memory, comparisons, and method details.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <nav style="margin-top:14px; display:flex; align-items:center; justify-content:space-between;">
+      <div class="tabs" role="tablist" aria-label="Report sections">
+        <div class="tab active" data-tab="overview"><span class="material-icons">dashboard</span> Overview</div>
+        <div class="tab" data-tab="runtime"><span class="material-icons">speed</span> Runtime</div>
+        <div class="tab" data-tab="memory"><span class="material-icons">storage</span> Memory</div>
+        <div class="tab" data-tab="comparison"><span class="material-icons">compare_arrows</span> Comparison</div>
+        <div class="tab" data-tab="methods"><span class="material-icons">menu_book</span> Methods</div>
+      </div>
+      <div class="muted" style="font-size:13px;">Generated by <strong>algoscope</strong></div>
+    </nav>
+
+    <main style="margin-top:12px;">
+      <!-- Overview -->
+      <section id="overview" class="panel active" data-aos="fade-up">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Manual Big-O Analysis</h3>
+            {% for label, md in manual_complexities.items() %}
+              <div style="margin-top:12px;">
+                <div style="display:flex; align-items:center; justify-content:space-between;">
+                  <div>
+                    <div class="badge">{{ label }}</div>
+                    <div class="muted" style="margin-top:6px;">{{ md }}</div>
+                  </div>
+                </div>
+              </div>
             {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in memory_table %}
-            <tr>
-              <td class="mono">{{ row.n }}</td>
-              {% for label, _ in manual_complexities.items() %}
-                {% set c = row[label] %}
-                <td class="mono">{{ c.mean | human_bytes }} ± {{ ((c.upper - c.lower)/2) | human_bytes }}</td>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+          </div>
 
-    <div class="card">
-      <h2>Comparison Summary</h2>
-      <p class="muted">Best/worst runtime per n (lower is better). Mean ranks aggregate performance across all n.</p>
-      <table>
-        <thead>
-          <tr>
-            <th>n</th>
-            <th>Best Runtime</th>
-            <th>Worst Runtime</th>
-            <th>Mean Ranks</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in comparison_rows %}
-            <tr>
-              <td class="mono">{{ row.n }}</td>
-              <td>{{ row.best_runtime }}</td>
-              <td>{{ row.worst_runtime }}</td>
-              <td class="mono">
-                {% for label, rankv in row.mean_ranks.items() %}
-                  <span class="pill">{{ label }}: {{ "%.2f"|format(rankv) }}</span>
+          <div class="card">
+            <h3>Beginner & Interview Summaries</h3>
+            <div style="margin-top:8px;">
+              {% for label, s in beginner_summaries.items() %}
+                <div style="margin-bottom:10px;">
+                  <div class="badge">{{ label }}</div>
+                  <p class="muted" style="margin-top:6px;">{{ s }}</p>
+                  <p class="muted" style="margin-top:6px;"><strong>Interview:</strong> {{ interview_summaries[label] }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Runtime -->
+      <section id="runtime" class="panel" data-aos="fade-up">
+        <div class="card">
+          <h3>Runtime Chart</h3>
+          <div style="margin-top:12px;">
+            <!-- Plotly runtime div (contains inline Plotly JS once) -->
+            <div id="runtime_chart">{{ runtime_div | safe }}</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;" class="card">
+          <h3>Runtime Table (mean ± 95% CI)</h3>
+          <div style="margin-top:10px; overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>n</th>
+                  {% for label, _ in manual_complexities.items() %}
+                    <th>{{ label }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in runtime_table %}
+                  <tr>
+                    <td class="mono">{{ row.n }}</td>
+                    {% for label, _ in manual_complexities.items() %}
+                      {% set c = row[label] %}
+                      <td class="mono">{{ c.mean | human_time }} ± {{ ((c.upper - c.lower)/2) | human_time }}</td>
+                    {% endfor %}
+                  </tr>
                 {% endfor %}
-              </td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
-    <div class="card">
-      <h2>Methods</h2>
-      <div class="code">{{ methods_text }}</div>
-      <p class="footer">Report generated by <span class="mono">algoscope</span>.</p>
-    </div>
+      <!-- Memory -->
+      <section id="memory" class="panel" data-aos="fade-up">
+        <div class="card">
+          <h3>Peak Memory Chart</h3>
+          <div style="margin-top:12px;">
+            <div id="memory_chart">{{ memory_div | safe }}</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;" class="card">
+          <h3>Memory Table (mean ± 95% CI)</h3>
+          <div style="margin-top:10px; overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>n</th>
+                  {% for label, _ in manual_complexities.items() %}
+                    <th>{{ label }}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in memory_table %}
+                  <tr>
+                    <td class="mono">{{ row.n }}</td>
+                    {% for label, _ in manual_complexities.items() %}
+                      {% set c = row[label] %}
+                      <td class="mono">{{ c.mean | human_bytes }} ± {{ ((c.upper - c.lower)/2) | human_bytes }}</td>
+                    {% endfor %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Comparison -->
+      <section id="comparison" class="panel" data-aos="fade-up">
+        <div class="card">
+          <h3>Comparison Summary</h3>
+          <p class="muted">Best/worst runtime at each n (lower is better). Mean ranks summarize performance across all n.</p>
+          <div style="margin-top:12px; overflow:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>n</th>
+                  <th>Best Runtime</th>
+                  <th>Worst Runtime</th>
+                  <th>Mean Ranks</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in comparison_rows %}
+                  <tr>
+                    <td class="mono">{{ row.n }}</td>
+                    <td>{{ row.best_runtime }}</td>
+                    <td>{{ row.worst_runtime }}</td>
+                    <td class="mono" style="min-width:240px;">
+                      {% for label, rankv in row.mean_ranks.items() %}
+                        <span class="badge" style="margin-right:6px;">{{ label }}: {{ "%.2f"|format(rankv) }}</span>
+                      {% endfor %}
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- optional: add a simple bar chart area for mean runtime comparison -->
+        <div style="margin-top:12px;" class="card">
+          <h3>Mean Runtime Comparison (bar)</h3>
+          <div id="bar_placeholder" style="height:320px;">
+            <!-- Place for an optional bar chart if you wish to inject one from plotting.py -->
+            <p class="muted">Bar chart placeholder: you can render an additional Plotly bar chart here comparing means per function.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Methods -->
+      <section id="methods" class="panel" data-aos="fade-up">
+        <div class="card">
+          <h3>Methods & Notes</h3>
+          <div style="margin-top:10px;" class="code">{{ methods_text }}</div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer" data-aos="fade-up">
+      <p>Generated by <strong>algoscope</strong> — Interactive algorithm analysis. View source or customize the template for your branding.</p>
+    </footer>
   </div>
+
+  <!-- AOS animations -->
+  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function(){
+      // init AOS
+      if (window.AOS) { AOS.init({ once: true, duration: 500 }); }
+
+      // Tabs logic
+      const tabs = document.querySelectorAll('.tab');
+      const panels = document.querySelectorAll('.panel');
+      tabs.forEach(t => {
+        t.addEventListener('click', () => {
+          tabs.forEach(x => x.classList.remove('active'));
+          t.classList.add('active');
+          const name = t.getAttribute('data-tab');
+          panels.forEach(p => {
+            p.classList.toggle('active', p.id === name);
+          });
+          // scroll to top of the panels area on mobile
+          document.querySelector('main').scrollIntoView({behavior: 'smooth'});
+        });
+      });
+
+      // Download report: serialize HTML and trigger download
+      const downloadBtn = document.getElementById('downloadBtn');
+      if (downloadBtn) {
+        downloadBtn.addEventListener('click', () => {
+          const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = (document.title || 'algoscope-report') + '.html';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+        });
+      }
+
+      // allow keyboard navigation for tabs
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+          const activeIndex = Array.from(tabs).findIndex(t => t.classList.contains('active'));
+          let next = activeIndex;
+          if (e.key === 'ArrowRight') next = Math.min(tabs.length - 1, activeIndex + 1);
+          else next = Math.max(0, activeIndex - 1);
+          tabs[next].click();
+        }
+      });
+    });
+  </script>
 </body>
 </html>
