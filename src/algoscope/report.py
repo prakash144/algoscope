@@ -5,25 +5,207 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from jinja2 import Environment, BaseLoader
+from markupsafe import escape
 import plotly.io as pio
+import re
 
 from .utils import human_time, human_bytes
 
 
 def load_template_text() -> str:
-    # template file located at templates/report.html.j2 (one level up)
-    with pkg_resources.as_file(pkg_resources.files("algoscope.templates").joinpath("report.html.j2")) as p:
-        return p.read_text(encoding="utf-8")
+    """
+    Load the Jinja2 template text from package resources. This tries the
+    packaged templates location first, and falls back to a sibling templates
+    directory for development setups.
+    """
+    try:
+        tmpl = pkg_resources.files("algoscope.templates").joinpath("report.html.j2")
+        return tmpl.read_text(encoding="utf-8")
+    except Exception:
+        # fallback: older layout where templates/ is adjacent to package
+        return pkg_resources.files("algoscope").joinpath("../templates/report.html.j2").read_text(encoding="utf-8")
 
 
-def fig_to_div(fig, include_js=False) -> str:
+def fig_to_div(fig, include_js: bool = False) -> str:
+    """
+    Convert a Plotly figure to an HTML div. When include_js=True, embed
+    Plotly JS inline (used once per report).
+    """
     return pio.to_html(
         fig,
         include_plotlyjs="inline" if include_js else False,
         full_html=False,
         default_width="100%",
-        default_height="580px",
+        default_height="620px",
     )
+
+
+def simple_markdown_to_html(text: str) -> str:
+    """
+    Convert a small subset of markdown-like syntax -> safe HTML.
+
+    - Convert **bold** -> <strong>, `code` -> <code>
+    - Convert lines starting with '- ' into <ul><li>...</li></ul>
+    - Convert "Label: value" into <div><strong>Label:</strong> value</div>
+    - Heading-like lines ending with ':' -> <h4>
+    - Ensure we escape arbitrary text but preserve our intentionally created tags.
+    """
+    if not text:
+        return ""
+
+    # Normalize and trim
+    text = text.strip()
+
+    # 1) Perform markdown-like transformations first (on raw text)
+    transformed = text
+    transformed = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", transformed)
+    transformed = re.sub(r"`(.+?)`", r"<code>\1</code>", transformed)
+
+    # 2) Protect our safe tags with placeholders so they won't be escaped:
+    placeholders = {
+        "<strong>": "§§STRONG_OPEN§§",
+        "</strong>": "§§STRONG_CLOSE§§",
+        "<code>": "§§CODE_OPEN§§",
+        "</code>": "§§CODE_CLOSE§§",
+        "<ul>": "§§UL_OPEN§§",
+        "</ul>": "§§UL_CLOSE§§",
+        "<li>": "§§LI_OPEN§§",
+        "</li>": "§§LI_CLOSE§§",
+        "<h4>": "§§H4_OPEN§§",
+        "</h4>": "§§H4_CLOSE§§",
+    }
+    for k, v in placeholders.items():
+        transformed = transformed.replace(k, v)
+
+    # 3) Escape the rest safely
+    escaped = escape(transformed)
+
+    # 4) Restore placeholders back to real tags
+    for k, v in placeholders.items():
+        escaped = escaped.replace(v, k)
+
+    # 5) Now build HTML structure line-by-line (lists, kv pairs, headings)
+    lines = escaped.splitlines()
+    out_lines = []
+    in_list = False
+
+    for raw in lines:
+        line = raw.strip()
+        if not line:
+            if in_list:
+                out_lines.append("</ul>")
+                in_list = False
+            continue
+
+        # Bullet -> list
+        if line.startswith("- "):
+            if not in_list:
+                out_lines.append("<ul>")
+                in_list = True
+            out_lines.append("<li>" + line[2:].strip() + "</li>")
+            continue
+
+        if in_list:
+            out_lines.append("</ul>")
+            in_list = False
+
+        # Heading-like (ends with colon)
+        if re.match(r"^[A-Za-z0-9 _`/()\-]+:$", line):
+            htext = line[:-1].strip()
+            out_lines.append(f"<h4 style=\"margin:6px 0;\">{htext}</h4>")
+            continue
+
+        # Label: value
+        m = re.match(r"^([^:]{1,60}):\s*(.+)$", line)
+        if m:
+            label = m.group(1).strip()
+            val = m.group(2).strip()
+            out_lines.append(f"<div><strong>{label}:</strong> {val}</div>")
+            continue
+
+        # Plain paragraph
+        out_lines.append(f"<p>{line}</p>")
+
+    if in_list:
+        out_lines.append("</ul>")
+
+    result = "\n".join(out_lines)
+
+    # Defensive wrap: if there exist <li> elements but no surrounding <ul>, wrap them
+    if "<li" in result and "<ul" not in result:
+        result = re.sub(r"(<li>.*?</li>(?:\s*<li>.*?</li>)*)", r"<ul>\1</ul>", result, flags=re.S)
+        result = re.sub(r"</ul>\s*<ul>", "\n", result)
+
+    # --- Targeted unescape for intentionally generated tags ---
+    # If any of our generated tags ended up escaped as &lt;...&gt; (due to prior escaping),
+    # restore only those exact tags. This keeps arbitrary content escaped (safe),
+    # while allowing our <ul>/<li>/<strong>/<code>/<h4> to render.
+    replacements = {
+        "&lt;ul&gt;": "<ul>",
+        "&lt;/ul&gt;": "</ul>",
+        "&lt;li&gt;": "<li>",
+        "&lt;/li&gt;": "</li>",
+        "&lt;strong&gt;": "<strong>",
+        "&lt;/strong&gt;": "</strong>",
+        "&lt;code&gt;": "<code>",
+        "&lt;/code&gt;": "</code>",
+        "&lt;h4&gt;": "<h4>",
+        "&lt;/h4&gt;": "</h4>",
+    }
+    for k, v in replacements.items():
+        if k in result:
+            result = result.replace(k, v)
+    # --- end unescape ---
+
+    return result
+
+
+def _concise_manual_html(explanation: str) -> str:
+    """
+    Convert a verbose explanation into a compact HTML summary:
+    - Extract Estimated Time Complexity and Estimated Space Complexity
+    - Extract the first 'Why:' sentence (shortened)
+    - Return a one-paragraph HTML string with a small muted 'Why' line.
+    """
+    if not explanation:
+        return ""
+
+    time_o = None
+    space_o = None
+
+    t_match = re.search(r"\*\*Estimated Time Complexity:\*\*\s*([^\s\*\n]+)", explanation)
+    s_match = re.search(r"\*\*Estimated Space Complexity:\*\*\s*([^\s\*\n]+)", explanation)
+
+    if t_match:
+        time_o = escape(t_match.group(1).strip())
+    if s_match:
+        space_o = escape(s_match.group(1).strip())
+
+    why = ""
+    why_m = re.search(r"Why:\s*(.+?)(?:\n\n|$)", explanation, flags=re.S)
+    if why_m:
+        why_raw = why_m.group(1).strip()
+        why = escape(why_raw)
+        if len(why) > 240:
+            why = why[:237].rstrip() + "..."
+
+    parts = []
+    if time_o:
+        parts.append(f"<strong>Time</strong>: {time_o}")
+    if space_o:
+        parts.append(f"<strong>Space</strong>: {space_o}")
+
+    if parts:
+        summary = " &bull; ".join(parts)
+    else:
+        first_line = explanation.strip().splitlines()[0]
+        summary = escape(first_line)
+
+    html = f"<p style='margin:6px 0;'>{summary}</p>"
+    if why:
+        html += f"<p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: {why}</p>"
+
+    return html
 
 
 @dataclass
@@ -45,13 +227,31 @@ def build_report_html(
     memory_fig,
     sections: ReportSections,
 ) -> str:
+    """
+    Build the final HTML by rendering the Jinja2 template. This prepares
+    small HTML fragments for manual complexities and methods text to keep
+    the UI concise.
+    """
     env = Environment(loader=BaseLoader())
     env.filters["human_time"] = human_time
     env.filters["human_bytes"] = human_bytes
 
     tpl = env.from_string(load_template_text())
 
-    # Put Plotly JS once (inline) using the runtime figure
+    # Convert manual complexities into concise HTML fragments
+    manual_html = {k: _concise_manual_html(v) for k, v in sections.manual_complexities.items()}
+
+    # Methods text: render as HTML using our simple converter
+    methods_html = simple_markdown_to_html(sections.methods_text)
+
+    # Defensive wrap: if converter produced li elements without an ul, wrap them
+    if "<li" in methods_html and "<ul" not in methods_html:
+        methods_html = "<ul>\n" + methods_html + "\n</ul>"
+        methods_html = methods_html.replace("</li>\n<li>", "</li><li>")
+
+    interview_html = sections.interview_summaries  # short strings; injected as plain text in template
+
+    # Put Plotly JS inline once using the runtime figure; memory figure gets referenced only
     runtime_div = fig_to_div(runtime_fig, include_js=True)
     memory_div = fig_to_div(memory_fig, include_js=False)
 
@@ -64,9 +264,9 @@ def build_report_html(
         comparison_rows=comparison_rows,
         runtime_div=runtime_div,
         memory_div=memory_div,
-        manual_complexities=sections.manual_complexities,
-        interview_summaries=sections.interview_summaries,
+        manual_complexities=manual_html,          # concise HTML fragments
+        interview_summaries=interview_html,
         beginner_summaries=sections.beginner_summaries,
-        methods_text=sections.methods_text,
+        methods_text=methods_html,                # HTML fragment (safe)
     )
     return html

@@ -48,6 +48,12 @@ Install algoscope in editable mode:
 pip install -e .
 ```
 
+Run Test:
+
+```bash
+pytest -q
+````
+
 Run the example comparison:
 Create a Python file named `run_analysis.py` with the following content:
 

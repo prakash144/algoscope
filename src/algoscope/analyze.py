@@ -244,15 +244,13 @@ def analyze_functions(
     interview_summaries = {label: s.interview_summary for label, s in stats.items()}
 
     methods_text = (
-        "Methods:\n"
-        "- **Runtime** measured with `time.perf_counter()`; each (function, n) pair ran "
+        f"- **Runtime** measured with `time.perf_counter()`; each (function, n) pair ran "
         f"{repeats} times after {warmup} warmup iterations. GC was enabled and collected before runs.\n"
-        "- **Memory** peak measured with "
-        f"`{mem_backend}` backend (`tracemalloc` by default).\n"
-        f"- **Confidence Intervals:** {ci_method.upper()} at {int(100*confidence)}% confidence. "
+        f"- **Memory** peak measured with `{mem_backend}` backend (`tracemalloc` by default).\n"
+        f"- **Confidence Intervals:** {ci_method.upper()} at {int(100 * confidence)}% confidence. "
         "T-intervals use standard t critical values; bootstrap uses 2,000 resamples with a fixed seed.\n"
-        "- **Reference curves** (O(1), O(log n), O(n), O(n log n), plus any custom) were normalized at "
-        f"the {'largest' if normalize_ref_at=='max' else 'smallest'} n to match the average observed runtime scale."
+        f"- **Reference curves** (O(1), O(log n), O(n), O(n log n), plus any custom) were normalized at "
+        f"the {'largest' if normalize_ref_at == 'max' else 'smallest'} n to match the average observed runtime scale."
     )
 
     sections = ReportSections(

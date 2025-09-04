@@ -55,6 +55,9 @@ def _has_divide_and_conquer_patterns(node: ast.AST) -> bool:
 def analyze_function_complexity(func) -> ComplexityGuess:
     """
     Static heuristic-based Big-O guess. Designed to be beginner-friendly.
+
+    NOTE: improved handling for divide-and-conquer patterns: even if recursion
+    is not explicit, the presence of halving or slicing strongly suggests O(log n).
     """
     try:
         src = inspect.getsource(func)
@@ -72,13 +75,20 @@ def analyze_function_complexity(func) -> ComplexityGuess:
     loop_depth = _max_loop_depth(node)
     dac = _has_divide_and_conquer_patterns(node)
 
-    # Time complexity guess
-    if recursion and dac:
+    # Heuristic order:
+    # 1) If divide-and-conquer (slicing or halving) -> likely logarithmic behavior
+    # 2) If recursion combined with dac -> logn with stack usage
+    # 3) else detect loops/recursion depth
+
+    if dac:
+        # Halving or slicing patterns strongly indicate O(log n) behaviour
         time_o = "O(log n)"
-        space_o = "O(log n)"
+        # If recursion present then stack space is O(log n) else O(1)
+        space_o = "O(log n)" if recursion else "O(1)"
         rationale = (
-            "Detected a recursive pattern with divide-and-conquer hints (e.g., index halving). "
-            "This suggests O(log n) time and O(log n) stack space (recursive depth)."
+            "Detected divide-and-conquer hints (index halving, slicing, floor division by 2). "
+            "This suggests logarithmic time. If implemented recursively, expect O(log n) stack space; "
+            "iterative implementations usually use O(1) extra space."
         )
     elif recursion and loop_depth == 0:
         time_o = "O(n)"
@@ -95,7 +105,7 @@ def analyze_function_complexity(func) -> ComplexityGuess:
         time_o = "O(n)"
         space_o = "O(1)"
         rationale = "One level of looping detected; typical single pass suggests O(n) time and O(1) space."
-    elif loop_depth >= 2:
+    else:  # loop_depth >= 2
         time_o = "O(n^2)"
         space_o = "O(1)"
         rationale = "Nested loops detected; suggests quadratic time with constant extra space."

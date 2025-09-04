@@ -244,11 +244,39 @@
     /* hover effects for rows */
     tbody tr:hover{ background: linear-gradient(90deg, rgba(51,102,255,0.03), rgba(0,191,166,0.01)); }
 
+    /* Styling for small auto-generated headings and label rows */
+    .card h4 {
+      margin: 6px 0;
+      font-size: 13px;
+      color: #0f172a;
+      font-weight: 700;
+    }
+    .card div > strong {
+      display: inline-block;
+      width: 160px; /* label column width for alignment */
+      color: #0f172a;
+      font-weight:700;
+    }
+    .card div { margin: 6px 0; color: var(--muted); }
+
     /* small responsive tweaks */
     @media (max-width:520px){
       .title-block h1{ font-size:16px; }
       .btn{ padding:8px; font-size:13px; }
     }
+
+    /* Plotly responsive enforcement & sizing */
+    .plotly-graph-div, .js-plotly-plot, .plotly {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    /* default chart height; Plotly inline divs created by fig_to_div will honor this */
+    #runtime_chart .plotly-graph-div, #memory_chart .plotly-graph-div, #bar_placeholder .plotly-graph-div {
+      min-height: 520px;
+      height: 520px;
+    }
+    /* ensure the placeholder uses full width */
+    #bar_placeholder { width:100%; }
   </style>
 
 </head>
@@ -341,7 +369,7 @@
                   <span class="material-icons">timer</span>
                 </div>
                 <div>
-                  <div class="value">{{ runtime_table|length }} runs</div>
+                  <div class="value">{{ runtime_table|length }} measured sizes</div>
                   <div class="label muted">Measured points</div>
                 </div>
               </div>
@@ -372,12 +400,13 @@
         <div class="grid-2">
           <div class="card">
             <h3>Manual Big-O Analysis</h3>
-            {% for label, md in manual_complexities.items() %}
+            {% for label, md_html in manual_complexities.items() %}
               <div style="margin-top:12px;">
-                <div style="display:flex; align-items:center; justify-content:space-between;">
-                  <div>
-                    <div class="badge">{{ label }}</div>
-                    <div class="muted" style="margin-top:6px;">{{ md }}</div>
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div class="badge">{{ label }}</div>
+                  <div style="flex:1;" aria-label="analysis-for-{{label}}">
+                    <!-- md_html is HTML safe fragment produced by report.build_report_html -->
+                    <div class="muted" style="margin-top:6px;">{{ md_html | safe }}</div>
                   </div>
                 </div>
               </div>
@@ -521,7 +550,7 @@
       <section id="methods" class="panel" data-aos="fade-up">
         <div class="card">
           <h3>Methods & Notes</h3>
-          <div style="margin-top:10px;" class="code">{{ methods_text }}</div>
+          <div style="margin-top:10px;" class="code">{{ methods_text | safe }}</div>
         </div>
       </section>
     </main>
