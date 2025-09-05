@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import gc
-import inspect
 import os
 import time
 import math
@@ -13,20 +12,18 @@ import numpy as np
 
 from .complexity import analyze_function_complexity
 from .memory import measure_peak_memory
-from .plotting import build_reference_curves, runtime_figure, memory_figure, overview_figure
+from .plotting import build_reference_curves, runtime_figure, memory_figure, overview_figure, heatmap_figure
 from .report import build_report_html, ReportSections
 from .utils import (
     t_confidence_interval,
     bootstrap_confidence_interval,
     CIResult,
-    human_time,
-    human_bytes,
     rank,
     ensure_args_kwargs,
     is_picklable,
     run_and_monitor_subprocess,
 )
-
+from typing import Sequence
 
 @dataclass
 class FunctionStats:
@@ -82,9 +79,6 @@ def _beginner_summary_from_scaling(ns: List[int], means: List[float]) -> str:
 
 
 def _empirical_slope(ns: List[int], means: List[float]) -> Optional[float]:
-    """
-    Fit log-log slope. Returns slope (exponent) or None if not enough data or invalid.
-    """
     arr = np.asarray(means, dtype=float)
     if arr.size < 2:
         return None
@@ -100,40 +94,107 @@ def _empirical_slope(ns: List[int], means: List[float]) -> Optional[float]:
         return None
 
 
+def _is_multi_param_input_example_from_builder(input_builder: Callable, ns: List[int]) -> bool:
+    """
+    Heuristic: call input_builder for a small set of ns and inspect args/kwargs.
+    We consider the input 'multi-parameter' only if there are multiple collection-like
+    arguments (list/tuple/set/dict/ndarray) or if arguments besides the first are
+    collection-like. Scalar extras (int/float/None/str/bool) are *not* considered
+    to indicate multi-parameter experiments (this avoids false positives like linear_search).
+    """
+    try:
+        # pick two different sizes if available to see shape behaviour (but we don't rely on variation)
+        n0 = ns[0]
+        n1 = ns[min(1, len(ns) - 1)]
+        a0, kw0 = ensure_args_kwargs(input_builder(n0))
+        a1, kw1 = ensure_args_kwargs(input_builder(n1))
+    except Exception:
+        # Can't probe — be conservative and say False (no warning)
+        return False
+
+    def is_collection_like(x) -> bool:
+        if x is None:
+            return False
+        if isinstance(x, (list, tuple, set, dict)):
+            return True
+        # numpy arrays
+        if hasattr(x, "shape") and hasattr(x, "dtype"):
+            return True
+        # other large iterables (but exclude strings)
+        if isinstance(x, Sequence) and not isinstance(x, (str, bytes)):
+            return True
+        return False
+
+    # Count collection-like positional args in the first call
+    seq_count = sum(1 for arg in a0 if is_collection_like(arg))
+    # Also count any collection-like kwargs
+    seq_count += sum(1 for v in kw0.values() if is_collection_like(v))
+
+    # If there is more than one collection-like argument, it's multi-parameter (likely)
+    if seq_count > 1:
+        return True
+
+    # If there is exactly one collection-like arg but some kwargs are collections, flag it
+    if seq_count == 1:
+        # If there are kwargs that are collections -> multi
+        if any(is_collection_like(v) for v in kw0.values()):
+            return True
+        # If other positional args besides the first are collection-like on the second probe => multi
+        # (This handles cases where input_builder might change shape across n)
+        other_pos_seq = any(is_collection_like(arg) for arg in a0[1:])
+        other_pos_seq |= any(is_collection_like(arg) for arg in a1[1:])
+        if other_pos_seq:
+            return True
+
+    # Otherwise do not treat it as multi-parameter (scalars like 'target' are OK)
+    return False
+
+
 def analyze_functions(
     funcs: List[Callable],
     input_builder: Callable[[int], Tuple[tuple, dict] | Any],
     ns: List[int],
     repeats: int = 7,
     warmup: int = 2,
-    ci_method: str = "t",  # "t" or "bootstrap"
+    ci_method: str = "t",
     confidence: float = 0.95,
-    mem_backend: str = "tracemalloc",  # "tracemalloc", "memory_profiler", or "rss"
+    mem_backend: str = "tracemalloc",
     reference_curves: Tuple[str, ...] = ("1", "logn", "n", "nlogn"),
-    normalize_ref_at: str = "max",  # "min" or "max"
+    normalize_ref_at: str = "max",
     html_out: Optional[str] = "report.html",
     title: str = "Algorithm Analysis Report",
     notes: Optional[str] = None,
     timeout: Optional[float] = 10.0,
     run_in_subprocess: bool = True,
+    verbose: bool = True,
+    # grid params (optional)
+    grid_x: Optional[List[int]] = None,
+    grid_y: Optional[List[int]] = None,
+    grid_input_builder: Optional[Callable[[int, int], Tuple[tuple, dict] | Any]] = None,
+    grid_log_color: bool = False,
 ) -> ResultObject:
     """
-    Runs benchmarks and memory analysis, computes confidence intervals,
-    builds plots, writes the final HTML report, and returns a results object.
-    If html_out is None, the report is not saved to a file.
+    Analyze functions: timing, memory, heuristics, plotting.
+    Optional grid sweep mode: provide grid_x, grid_y and grid_input_builder(x, y)
+    to produce per-function heatmaps embedded in the report.
     """
-    print("🔍 Analyzing algorithms... please wait, this may take some time ⏳")
-    # Input validation
-    if not callable(input_builder):
-        raise TypeError("input_builder must be a callable that accepts n and returns args/kwargs.")
+    if verbose:
+        print("🔍 Analyzing algorithms... please wait, this may take some time ⏳")
+
+    # Validation
+    if not callable(input_builder) and not (grid_x and grid_y and grid_input_builder):
+        raise TypeError("input_builder must be a callable (unless running grid mode with grid_input_builder).")
     if not isinstance(ns, list) or not ns:
-        raise ValueError("ns must be a non-empty list of input sizes (ints).")
+        raise ValueError("ns must be a non-empty list of integers.")
     for n in ns:
         if not isinstance(n, int) or n <= 0:
             raise ValueError("All values in ns must be positive integers.")
 
-    # Pre-analysis (heuristic static analysis + dynamic probe)
+    # Setup
     stats: Dict[str, FunctionStats] = {}
+    func_map: Dict[str, Callable] = {}
+    picklable_cache: Dict[str, bool] = {}
+
     for f in funcs:
         label = _maybe_label(f)
         guess = analyze_function_complexity(f, input_builder if callable(input_builder) else None)
@@ -143,44 +204,66 @@ def analyze_functions(
             interview_summary=guess.interview_summary,
             dynamic_guess=guess.dynamic_guess,
         )
+        func_map[label] = f
+        picklable_cache[label] = is_picklable(f)
 
-    # Warmups (time only)
+        # Heuristic multi-param input detection (improved)
+        try:
+            is_multi_param = _is_multi_param_input_example_from_builder(input_builder, ns) if callable(
+                input_builder) else False
+        except Exception:
+            is_multi_param = False
+
+        if is_multi_param:
+            for s in stats.values():
+                s.errors.append(
+                    "Input appears multi-parameter (multiple collection-like inputs). "
+                    "For correct empirical scaling (e.g. knapsack where both n and W matter), "
+                    "consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments."
+                )
+
+    # Warmup
     for f in funcs:
+        label = _maybe_label(f)
         for _ in range(max(0, warmup)):
             for n in ns[: min(2, len(ns))]:
-                args, kwargs = ensure_args_kwargs(input_builder(n))
                 try:
-                    if run_in_subprocess and is_picklable(f):
+                    args, kwargs = ensure_args_kwargs(input_builder(n))
+                except Exception as e:
+                    stats[label].errors.append(f"input_builder failed for warmup n={n}: {repr(e)}")
+                    continue
+                try:
+                    if run_in_subprocess and picklable_cache[label]:
                         _ = run_and_monitor_subprocess(f, args=tuple(args), kwargs=kwargs, timeout=timeout)
                     else:
-                        # in-process warmup
                         f(*args, **kwargs)
                 except Exception:
-                    # warmup failures are non-fatal; just record
-                    label = _maybe_label(f)
                     stats[label].errors.append(f"warmup failed for n={n}")
 
     # Main timed + memory runs
     for f in funcs:
         label = _maybe_label(f)
-        # Determine whether we can realistically capture RSS for this function
-        can_rss = (mem_backend == "rss") and run_in_subprocess and is_picklable(f)
+        can_rss = (mem_backend == "rss") and run_in_subprocess and picklable_cache[label]
         if mem_backend == "rss" and not can_rss:
             stats[label].errors.append(
-                "Requested mem_backend='rss' but subprocess isolation is unavailable for this function; "
-                "falling back to tracemalloc for in-process memory measurements."
+                "Requested mem_backend='rss' but subprocess isolation is unavailable; falling back to tracemalloc."
             )
 
         for n in ns:
-            times = []
-            mems = []
+            times: List[float] = []
+            mems: List[int] = []
             for _ in range(repeats):
                 gc.collect()
                 gc.enable()
-                args, kwargs = ensure_args_kwargs(input_builder(n))
+                try:
+                    args, kwargs = ensure_args_kwargs(input_builder(n))
+                except Exception as e:
+                    stats[label].errors.append(f"input_builder failed for n={n}: {repr(e)}")
+                    times.append(float("nan"))
+                    mems.append(0)
+                    continue
 
-                # Prefer single-run subprocess that provides duration + peak RSS (works for RSS measurement)
-                if run_in_subprocess and is_picklable(f):
+                if run_in_subprocess and picklable_cache[label]:
                     info = run_and_monitor_subprocess(f, args=tuple(args), kwargs=kwargs, timeout=timeout)
                     if info.get("timed_out"):
                         stats[label].errors.append(f"n={n}: timed out (>{timeout}s)")
@@ -196,23 +279,19 @@ def analyze_functions(
                     duration = info.get("duration", float("nan"))
                     peak_rss = int(info.get("peak_rss", 0) or 0)
                     times.append(duration)
-                    # if user explicitly asked for rss, use the peak_rss; otherwise still record peak_rss for visibility
                     mems.append(peak_rss)
                 else:
-                    # fallback: in-process measurement (no reliable RSS unless underlying mem_backend supports it)
                     try:
                         t0 = time.perf_counter()
                         f(*args, **kwargs)
                         duration = time.perf_counter() - t0
                         times.append(duration)
                     except Exception as e:
-                        stats[label].errors.append(f"n={n}: exception: {repr(e)}")
+                        stats[label].errors.append(f"n={n}: exception during run: {repr(e)}")
                         times.append(float("nan"))
 
-                    # Choose effective in-process mem backend (cannot do rss reliably here)
                     effective_mem_backend = mem_backend
                     if mem_backend == "rss":
-                        # cannot do RSS without subprocess monitoring; fall back to tracemalloc
                         effective_mem_backend = "tracemalloc"
 
                     try:
@@ -225,7 +304,7 @@ def analyze_functions(
             stats[label].times[n] = times
             stats[label].mems[n] = mems
 
-    # Compute confidence intervals (per function, per n), ignoring NaNs
+    # Confidence intervals
     for s in stats.values():
         for n in ns:
             samples_t = [x for x in s.times.get(n, []) if isinstance(x, (int, float)) and math.isfinite(x)]
@@ -259,82 +338,99 @@ def analyze_functions(
         mem_lowers[label] = [s.mem_ci[n].lower for n in ns]
         mem_uppers[label] = [s.mem_ci[n].upper for n in ns]
 
-    # Reference curves normalized at min or max n
+    # Reference curves
     anchor_idx = 0 if normalize_ref_at == "min" else -1
-    anchor_values = [time_means[label][anchor_idx] for label in time_means if len(time_means[label]) > 0]
+    anchor_values = []
+    for label in time_means:
+        vals = time_means[label]
+        if len(vals) > 0:
+            v = vals[anchor_idx]
+            if np.isfinite(v):
+                anchor_values.append(v)
     y_anchor = float(np.mean(anchor_values)) if anchor_values else 1.0
     ref_curves = build_reference_curves(ns, reference_curves, y_anchor, normalize_at=normalize_ref_at)
 
-    # Build runtime & memory figures (Plotly)
+    # Figures
     runtime_fig = runtime_figure(ns, time_means, time_lowers, time_uppers, ref_curves, title)
     memory_fig = memory_figure(ns, mem_means, mem_lowers, mem_uppers, title)
 
-    # Comparison rows + mean ranks
+    # Comparison rows + ranks
     comparison_rows: List[Dict[str, Any]] = []
     labels = list(stats.keys())
     ranks_accum: Dict[str, List[float]] = {label: [] for label in labels}
     for i, n in enumerate(ns):
         means = [time_means[label][i] for label in labels]
-        # use rank on raw means (smaller is better)
         r = rank(means)
         for idx, label in enumerate(labels):
             ranks_accum[label].append(r[idx])
-        # use nan-safe argmin/argmax
         best_label = labels[int(np.nanargmin(means))]
         worst_label = labels[int(np.nanargmax(means))]
         comparison_rows.append({"n": n, "best_runtime": best_label, "worst_runtime": worst_label})
 
     mean_ranks = {label: float(np.mean(ranks)) for label, ranks in ranks_accum.items()}
 
-    # Build overview figure
+    # Overview figure
     try:
         ov_fig = overview_figure(ns, time_means, mem_means, mean_ranks)
     except Exception:
         ov_fig = None
 
-    # Build tables
+    # Build tables defensively
     runtime_table: List[Dict[str, Any]] = []
     for n in ns:
         row: Dict[str, Any] = {"n": n}
         for label in stats.keys():
-            ci = stats[label].time_ci[n]
-            row[label] = {"mean": ci.mean, "lower": ci.lower, "upper": ci.upper}
+            ci = stats[label].time_ci.get(n)
+            if ci is None:
+                row[label] = {"mean": float("nan"), "lower": float("nan"), "upper": float("nan")}
+            else:
+                row[label] = {"mean": ci.mean, "lower": ci.lower, "upper": ci.upper}
         runtime_table.append(row)
 
     memory_table: List[Dict[str, Any]] = []
     for n in ns:
         row: Dict[str, Any] = {"n": n}
         for label in stats.keys():
-            ci = stats[label].mem_ci[n]
-            row[label] = {"mean": ci.mean, "lower": ci.lower, "upper": ci.upper}
+            ci = stats[label].mem_ci.get(n)
+            if ci is None:
+                row[label] = {"mean": float("nan"), "lower": float("nan"), "upper": float("nan")}
+            else:
+                row[label] = {"mean": ci.mean, "lower": ci.lower, "upper": ci.upper}
         memory_table.append(row)
 
-    # Summaries & dynamic empirical slopes
-    beginner_summaries = {label: _beginner_summary_from_scaling(ns, time_means[label]) for label in labels}
+    # Summaries & dynamic guesses
+    beginner_summaries: Dict[str, str] = {}
+    dynamic_guesses: Dict[str, str] = {}
+    for label in labels:
+        slope = _empirical_slope(ns, time_means[label])
+        if slope is None:
+            beginner_summaries[label] = "Not enough reliable data to estimate scaling."
+            dynamic_guesses[label] = stats[label].dynamic_guess or "No dynamic hint"
+        else:
+            if slope < 0.3:
+                msg = "Runtime appears sub-logarithmic / nearly constant."
+                family = "sub-logarithmic / decreasing"
+            elif slope < 0.8:
+                msg = "Runtime scales like O(log n)."
+                family = "O(log n)"
+            elif slope < 1.2:
+                msg = "Runtime scales like O(n)."
+                family = "O(n)"
+            elif slope < 1.8:
+                msg = "Runtime scales like O(n log n) or slightly superlinear."
+                family = "O(n log n) / slightly superlinear"
+            elif slope < 2.5:
+                msg = "Runtime scales like O(n^2)."
+                family = "O(n^2)"
+            else:
+                msg = "Runtime appears super-polynomial / exponential."
+                family = "super-polynomial / exponential-like"
+
+            beginner_summaries[label] = f"Empirical slope ≈ {slope:.2f} — {msg}"
+            dynamic_guesses[label] = f"Empirical slope ≈ {slope:.2f} -> suggests {family}."
 
     manual_complexities_full = {label: s.manual_explanation for label, s in stats.items()}
     interview_summaries = {label: s.interview_summary for label, s in stats.items()}
-
-    dynamic_guesses = {}
-    for label in labels:
-        slope = _empirical_slope(ns, time_means[label])
-        if slope is not None:
-            # map slope to human-friendly families
-            if slope < 0.3:
-                family = "sub-logarithmic / decreasing"
-            elif slope < 0.8:
-                family = "O(log n)"
-            elif slope < 1.2:
-                family = "O(n)"
-            elif slope < 1.8:
-                family = "O(n log n) / slightly superlinear"
-            elif slope < 2.5:
-                family = "O(n^2)"
-            else:
-                family = "super-polynomial / exponential-like"
-            dynamic_guesses[label] = f"Empirical slope ≈ {slope:.2f} -> suggests {family}."
-        else:
-            dynamic_guesses[label] = stats[label].dynamic_guess or "No dynamic hint"
 
     methods_text = (
         f"- **Runtime** measured with `time.perf_counter()`; each (function, n) pair ran "
@@ -352,6 +448,48 @@ def analyze_functions(
         dynamic_guesses=dynamic_guesses,
     )
 
+    # Optional grid sweep heatmaps
+    heatmap_divs: Dict[str, str] = {}
+    if grid_x and grid_y and grid_input_builder:
+        gx = list(grid_x)
+        gy = list(grid_y)
+        # prepare mapping of label->function for safe dispatch
+        for label, func in func_map.items():
+            z = np.full((len(gy), len(gx)), np.nan, dtype=float)
+            for j, yv in enumerate(gy):
+                for i, xv in enumerate(gx):
+                    samples = []
+                    for rep in range(repeats):
+                        try:
+                            args, kwargs = ensure_args_kwargs(grid_input_builder(xv, yv))
+                        except Exception as e:
+                            stats[label].errors.append(f"grid input_builder failed for (x={xv}, y={yv}): {repr(e)}")
+                            samples.append(float("nan"))
+                            continue
+                        try:
+                            if run_in_subprocess and picklable_cache[label]:
+                                info = run_and_monitor_subprocess(func, args=tuple(args), kwargs=kwargs, timeout=timeout)
+                                if info.get("success"):
+                                    samples.append(float(info.get("duration", float("nan"))))
+                                else:
+                                    samples.append(float("nan"))
+                            else:
+                                t0 = time.perf_counter()
+                                func(*args, **kwargs)
+                                samples.append(time.perf_counter() - t0)
+                        except Exception:
+                            samples.append(float("nan"))
+                    arr = np.array([x for x in samples if np.isfinite(x)], dtype=float)
+                    z[j, i] = float(np.mean(arr)) if arr.size > 0 else float("nan")
+            try:
+                fig = heatmap_figure(gx, gy, z, title=f"{title} — {label} (grid sweep)", x_label="X", y_label="Y", z_label="Time (s)", log_color=grid_log_color)
+                # convert without embedding plotly.js (template includes CDN)
+                import plotly.io as _pio
+                heatmap_divs[label] = _pio.to_html(fig, include_plotlyjs=False, full_html=False)
+            except Exception as e:
+                stats[label].errors.append(f"failed to build heatmap for {label}: {repr(e)}")
+
+    # Render HTML
     html = build_report_html(
         title=title,
         notes=notes,
@@ -365,14 +503,18 @@ def analyze_functions(
         overview_fig=ov_fig,
         html_path=os.path.abspath(html_out) if html_out else None,
         func_stats=stats,
+        heatmap_divs=heatmap_divs,
     )
 
     if html_out:
         with open(html_out, "w", encoding="utf-8") as f:
             f.write(html)
 
-    print(f"✅ Analysis complete. Report saved to: {os.path.abspath(html_out)}") if html_out else print(
-        "✅ Analysis complete. (No report file saved)")
+    if verbose:
+        if html_out:
+            print(f"✅ Analysis complete. Report saved to: {os.path.abspath(html_out)}")
+        else:
+            print("✅ Analysis complete. (No report file saved)")
 
     return ResultObject(
         html=html,
@@ -382,15 +524,11 @@ def analyze_functions(
         func_stats=stats,
     )
 
-# Convenience wrapper for analyzing a single function
+
 def analyze_function(
     func: Callable,
     input_builder: Callable[[int], Tuple[tuple, dict] | Any],
     ns: List[int],
     **kwargs: Any,
 ) -> ResultObject:
-    """
-    Thin wrapper to analyze a single function.
-    Simply calls analyze_functions([func], ...).
-    """
     return analyze_functions([func], input_builder, ns, **kwargs)

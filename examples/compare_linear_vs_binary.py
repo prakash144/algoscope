@@ -63,8 +63,6 @@ if __name__ == "__main__":
     functions_to_compare = [linear_search, binary_search]
     input_sizes = [1000, 2000, 4000, 8000, 16000, 32000]
 
-    print("🔍 Analyzing algorithms... please wait, this may take some time ⏳")
-
     results = analyze_functions(
         funcs=functions_to_compare,
         input_builder=build_input,
@@ -82,5 +80,3 @@ if __name__ == "__main__":
         timeout=10.0,
         run_in_subprocess=True,
     )
-
-    print(f"✅ Analysis complete. Report saved to: {results.html_path}")

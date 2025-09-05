@@ -4,28 +4,37 @@ from __future__ import annotations
 import importlib.resources as pkg_resources
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
-import json
-
 from jinja2 import Environment, BaseLoader
 from markupsafe import escape
 import plotly.io as pio
 import re
+import json
 
 from .utils import human_time, human_bytes
 
 
 def load_template_text() -> str:
+    """
+    Load the Jinja2 template text from package resources. This tries the
+    packaged templates location first, and falls back to a sibling templates
+    directory for development setups.
+    """
     try:
         tmpl = pkg_resources.files("algoscope.templates").joinpath("report.html.j2")
         return tmpl.read_text(encoding="utf-8")
     except Exception:
+        # fallback: older layout where templates/ is adjacent to package
         return pkg_resources.files("algoscope").joinpath("../templates/report.html.j2").read_text(encoding="utf-8")
 
 
 def fig_to_div(fig, include_js: bool = False) -> str:
+    """
+    Convert a Plotly figure to an HTML div. When include_js=True, embed
+    Plotly JS inline (used once per report).
+    """
     return pio.to_html(
         fig,
-        include_plotlyjs=False,  # We'll include a single Plotly script in the template head (CDN)
+        include_plotlyjs="cdn" if include_js else False,
         full_html=False,
         default_width="100%",
         default_height="620px",
@@ -33,14 +42,27 @@ def fig_to_div(fig, include_js: bool = False) -> str:
 
 
 def simple_markdown_to_html(text: str) -> str:
+    """
+    Convert a small subset of markdown-like syntax -> safe HTML.
+
+    - Convert **bold** -> <strong>, `code` -> <code>
+    - Convert lines starting with '- ' into <ul><li>...</li></ul>
+    - Convert "Label: value" into <div><strong>Label:</strong> value</div>
+    - Heading-like lines ending with ':' -> <h4>
+    - Ensure we escape arbitrary text but preserve our intentionally created tags.
+    """
     if not text:
         return ""
 
+    # Normalize and trim
     text = text.strip()
+
+    # 1) Perform markdown-like transformations first (on raw text)
     transformed = text
     transformed = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", transformed)
     transformed = re.sub(r"`(.+?)`", r"<code>\1</code>", transformed)
 
+    # 2) Protect our safe tags with placeholders so they won't be escaped:
     placeholders = {
         "<strong>": "§§STRONG_OPEN§§",
         "</strong>": "§§STRONG_CLOSE§§",
@@ -56,11 +78,14 @@ def simple_markdown_to_html(text: str) -> str:
     for k, v in placeholders.items():
         transformed = transformed.replace(k, v)
 
+    # 3) Escape the rest safely
     escaped = escape(transformed)
 
+    # 4) Restore placeholders back to real tags
     for k, v in placeholders.items():
         escaped = escaped.replace(v, k)
 
+    # 5) Now build HTML structure line-by-line (lists, kv pairs, headings)
     lines = escaped.splitlines()
     out_lines = []
     in_list = False
@@ -73,6 +98,7 @@ def simple_markdown_to_html(text: str) -> str:
                 in_list = False
             continue
 
+        # Bullet -> list
         if line.startswith("- "):
             if not in_list:
                 out_lines.append("<ul>")
@@ -84,11 +110,13 @@ def simple_markdown_to_html(text: str) -> str:
             out_lines.append("</ul>")
             in_list = False
 
+        # Heading-like (ends with colon)
         if re.match(r"^[A-Za-z0-9 _`/()\-]+:$", line):
             htext = line[:-1].strip()
             out_lines.append(f"<h4 style=\"margin:6px 0;\">{htext}</h4>")
             continue
 
+        # Label: value
         m = re.match(r"^([^:]{1,60}):\s*(.+)$", line)
         if m:
             label = m.group(1).strip()
@@ -96,6 +124,7 @@ def simple_markdown_to_html(text: str) -> str:
             out_lines.append(f"<div><strong>{label}:</strong> {val}</div>")
             continue
 
+        # Plain paragraph
         out_lines.append(f"<p>{line}</p>")
 
     if in_list:
@@ -103,10 +132,12 @@ def simple_markdown_to_html(text: str) -> str:
 
     result = "\n".join(out_lines)
 
+    # Defensive wrap: if there exist <li> elements but no surrounding <ul>, wrap them
     if "<li" in result and "<ul" not in result:
         result = re.sub(r"(<li>.*?</li>(?:\s*<li>.*?</li>)*)", r"<ul>\1</ul>", result, flags=re.S)
         result = re.sub(r"</ul>\s*<ul>", "\n", result)
 
+    # --- Targeted unescape for intentionally generated tags ---
     replacements = {
         "&lt;ul&gt;": "<ul>",
         "&lt;/ul&gt;": "</ul>",
@@ -122,11 +153,18 @@ def simple_markdown_to_html(text: str) -> str:
     for k, v in replacements.items():
         if k in result:
             result = result.replace(k, v)
+    # --- end unescape ---
 
     return result
 
 
 def _concise_manual_html(explanation: str) -> str:
+    """
+    Convert a verbose explanation into a compact HTML summary:
+    - Extract Estimated Time Complexity and Estimated Space Complexity
+    - Extract the first 'Why:' sentence (shortened)
+    - Return a one-paragraph HTML string with a small muted 'Why' line.
+    """
     if not explanation:
         return ""
 
@@ -174,6 +212,7 @@ class ReportSections:
     interview_summaries: Dict[str, str]
     beginner_summaries: Dict[str, str]
     methods_text: str
+    # optional dynamic_guesses may be added at runtime
     dynamic_guesses: Optional[Dict[str, str]] = None
 
 
@@ -190,29 +229,42 @@ def build_report_html(
     overview_fig=None,
     html_path: Optional[str] = None,
     func_stats: Optional[Dict[str, Any]] = None,
+    heatmap_divs: Optional[Dict[str, str]] = None,
 ) -> str:
+    """
+    Build the final HTML by rendering the Jinja2 template. This prepares
+    small HTML fragments for manual complexities and methods text to keep
+    the UI concise.
+    """
     env = Environment(loader=BaseLoader())
     env.filters["human_time"] = human_time
     env.filters["human_bytes"] = human_bytes
 
     tpl = env.from_string(load_template_text())
 
+    # Convert manual complexities into concise HTML fragments
     manual_html_concise = {}
     manual_html_full = {}
-    dyn_map = getattr(sections, "dynamic_guesses", {}) or {}
+    # dynamic_guesses may be None or dict; guard accordingly
+    dyn_map = getattr(sections, "dynamic_guesses", None) or {}
+
     for label, explanation in sections.manual_complexities.items():
-        conc = _concise_manual_html(explanation)
-        manual_html_concise[label] = conc
+        base_html = _concise_manual_html(explanation)
         heuristic_html = simple_markdown_to_html(explanation)
         dynamic_html = escape(str(dyn_map.get(label, "")))
+        manual_html_concise[label] = base_html
         manual_html_full[label] = {"heuristic": heuristic_html, "dynamic": dynamic_html}
 
+    # Methods text: render as HTML using our simple converter
     methods_html = simple_markdown_to_html(sections.methods_text)
 
-    # generate divs without embedding Plotly JS; template will include CDN
-    runtime_div = fig_to_div(runtime_fig, include_js=False)
-    memory_div = fig_to_div(memory_fig, include_js=False)
-    overview_div = fig_to_div(overview_fig, include_js=False) if overview_fig is not None else ""
+    # Convert figures to divs (do not inline plotly.js; template includes CDN)
+    runtime_div = pio.to_html(runtime_fig, include_plotlyjs=False, full_html=False) if runtime_fig is not None else ""
+    memory_div = pio.to_html(memory_fig, include_plotlyjs=False, full_html=False) if memory_fig is not None else ""
+    overview_div = pio.to_html(overview_fig, include_plotlyjs=False, full_html=False) if overview_fig is not None else ""
+
+    # Ensure heatmap_divs is a dict
+    heatmap_divs = heatmap_divs or {}
 
     html = tpl.render(
         title=title,
@@ -233,7 +285,10 @@ def build_report_html(
         runtime_table_json=json.dumps(runtime_table),
         memory_table_json=json.dumps(memory_table),
         comparison_rows_json=json.dumps(comparison_rows),
-        # <-- expose dynamic_guesses to template (always a dict)
+        heatmap_divs=heatmap_divs,
+        # *** Fix: supply dynamic_guesses explicitly for template usage ***
         dynamic_guesses=dyn_map,
+        # optionally expose func_stats for diagnostics in template
+        func_stats=func_stats or {},
     )
     return html

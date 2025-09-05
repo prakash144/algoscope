@@ -4,96 +4,103 @@
   <meta charset="utf-8"/>
   <title>0/1 Knapsack Approaches</title>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <!-- Include Plotly from CDN once for reliability in all environments -->
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <!-- Plotly JS (CDN) - included once for the whole report -->
+  <script src="https://cdn.plot.ly/plotly-2.22.0.min.js"></script>
 
+  <!-- AOS for subtle scroll animation -->
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
   <style>
     :root{
-      --bg: #f6f8fb;
+      --bg: linear-gradient(180deg,#f7f9ff 0%, #eef4ff 100%);
       --card: #ffffff;
       --muted: #6b7280;
       --accent: #3366ff;
       --accent-2: #00bfa6;
       --radius: 14px;
-      --shadow-sm: 0 3px 8px rgba(18,24,40,0.06);
-      --shadow-md: 0 6px 18px rgba(18,24,40,0.1);
-      --max-width: 1180px;
+      --shadow-sm: 0 6px 18px rgba(18,24,40,0.06);
+      --shadow-md: 0 12px 30px rgba(18,24,40,0.10);
+      --max-width: 1280px;
     }
     html,body{height:100%;}
     body{
       margin:0;
-      font-family: "Inter", system-ui, sans-serif;
-      background: linear-gradient(180deg, #f6f8fb 0%, #eef2ff 100%);
-      color: #0f172a;
-      padding: 20px;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: #081123;
+      padding: 28px;
       display:flex;
       justify-content:center;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
     }
     .container{ width:100%; max-width:var(--max-width); margin: 12px; }
 
-    header.topbar{ display:flex; align-items:center; justify-content:space-between; gap: 16px; margin-bottom:20px; }
-    .brand{ display:flex; gap:12px; align-items:center; }
+    header.topbar{ display:flex; align-items:center; justify-content:space-between; gap: 16px; margin-bottom:22px; }
+    .brand{ display:flex; gap:14px; align-items:center; }
     .logo{
-      width:52px; height:52px; display:grid; place-items:center;
-      background:linear-gradient(135deg,var(--accent),#6b8cff);
-      color:white; border-radius:14px; box-shadow:var(--shadow-sm);
-      font-weight:700; font-size:20px;
+      width:64px; height:64px; display:grid; place-items:center;
+      background:linear-gradient(135deg,var(--accent), #6b8cff);
+      color:white; border-radius:16px; box-shadow:var(--shadow-sm);
+      font-weight:800; font-size:22px;
     }
-    .title-block h1{ margin:0; font-size:20px; font-weight:700; }
+    .title-block h1{ margin:0; font-size:18px; font-weight:700; letter-spacing: -0.2px; }
     .title-block p{ margin:0; color:var(--muted); font-size:13px; }
 
-    .actions{ display:flex; gap:8px; align-items:center; }
+    .actions{ display:flex; gap:10px; align-items:center; }
     .btn{
-      background:var(--card); border:1px solid rgba(13,18,36,0.08);
-      padding:8px 12px; border-radius:10px; cursor:pointer;
+      background:var(--card); border:1px solid rgba(13,18,36,0.06);
+      padding:10px 14px; border-radius:10px; cursor:pointer;
       box-shadow:var(--shadow-sm); display:inline-flex; gap:8px; align-items:center;
-      font-weight:600; color:#0f172a; font-size:13px;
+      font-weight:700; color:#0f172a; font-size:13px;
     }
     .btn.primary{ background: linear-gradient(90deg,var(--accent), #5c7cff); color:white; border:none; box-shadow:var(--shadow-md);}
     .btn:active{ transform: translateY(1px); }
 
     .card{
       background: var(--card); border-radius: var(--radius);
-      padding: 16px; box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(15,23,42,0.05);
+      padding: 18px; box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(15,23,42,0.04);
     }
-    .card h3{ margin:0 0 10px 0; font-size:15px; font-weight:600; }
+    .card h3{ margin:0 0 8px 0; font-size:15px; font-weight:700; }
     .card p { margin:0; color:var(--muted); font-size:13px; }
 
-    .summary-row{ display:grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom:20px; }
+    /* layout */
+    .summary-row{ display:grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-bottom:18px; }
     @media (max-width:980px){ .summary-row{ grid-template-columns: 1fr 1fr; } }
     @media (max-width:640px){ .summary-row{ grid-template-columns: 1fr; } }
 
     .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
     @media (max-width:860px){ .grid-2{ grid-template-columns: 1fr; } }
 
-    .tabs{ display:flex; gap:8px; padding: 8px; background:#fff; border-radius: 999px; border:1px solid rgba(15,23,42,0.06); box-shadow:var(--shadow-sm);}
-    .tab{ padding:10px 16px; border-radius: 999px; cursor:pointer; color:var(--muted); font-weight:600; font-size:13px; display:inline-flex; gap:6px; align-items:center; }
+    /* Tabs */
+    .tabs{ display:flex; gap:10px; padding: 10px; background:#fff; border-radius: 999px; border:1px solid rgba(15,23,42,0.06); box-shadow:var(--shadow-sm);}
+    .tab{ padding:10px 14px; border-radius: 999px; cursor:pointer; color:var(--muted); font-weight:700; font-size:13px; display:inline-flex; gap:8px; align-items:center; }
     .tab.active{ background: linear-gradient(90deg,var(--accent), #6b8cff); color:white; box-shadow:var(--shadow-md);}
     .panel{ display:none; animation: fadeIn 280ms ease both; }
     .panel.active{ display:block; }
     @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to { opacity:1; transform:none;} }
 
-    table { width:100%; border-collapse: collapse; font-size:13px; margin-top:8px;}
-    thead th { text-align:left; font-size:12px; color:var(--muted); padding:8px; border-bottom:1px solid rgba(15,23,42,0.08); }
-    tbody td{ padding:8px; border-bottom:1px dashed rgba(15,23,42,0.05); }
-    tbody tr:hover{ background: rgba(51,102,255,0.04); }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    /* Tables */
+    table { width:100%; border-collapse: collapse; font-size:13px; margin-top:10px;}
+    thead th { text-align:left; font-size:12px; color:var(--muted); padding:10px; border-bottom:1px solid rgba(15,23,42,0.06); }
+    tbody td{ padding:10px; border-bottom:1px dashed rgba(15,23,42,0.04); }
+    tbody tr:hover{ background: rgba(51,102,255,0.03); }
 
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:13px; }
+
+    /* Chart containers */
     .plotly-graph-div, .js-plotly-plot, .plotly { width:100%!important; max-width:100%!important; }
     #overview_chart, #runtime_chart, #memory_chart { min-height:420px; }
 
-    .badge{ display:inline-block; padding:5px 8px; border-radius:8px; background:#f2f4ff; color:var(--accent); font-weight:600; font-size:12px; margin-right:6px; }
+    .badge{ display:inline-block; padding:6px 10px; border-radius:10px; background:#f2f6ff; color:var(--accent); font-weight:700; font-size:12px; margin-right:8px; }
     .muted{ color:var(--muted); }
 
-    .code{ background:#f8faff; border:1px solid rgba(15,23,42,0.05); padding:12px; border-radius:10px; white-space:pre-wrap; font-size:13px; font-family:ui-monospace,monospace; color:#0f172a; }
-    footer.footer{ margin-top:22px; color:var(--muted); font-size:12px; text-align:center; }
+    .code{ background:#fafbff; border:1px solid rgba(15,23,42,0.04); padding:14px; border-radius:12px; white-space:pre-wrap; font-size:13px; font-family:ui-monospace,monospace; color:#0f172a; }
+
+    footer.footer{ margin-top:26px; color:var(--muted); font-size:13px; text-align:center; }
   </style>
 </head>
 <body>
@@ -110,10 +117,7 @@
         
           <a class="btn" href="file:///Users/prakash/Documents/github-repos/Real-Project/algoscope/examples/report_knapsack.html"><span class="material-icons">launch</span> Open</a>
         
-        <button class="btn" id="downloadHtmlBtn"><span class="material-icons">download</span> Download HTML</button>
-        <button class="btn" id="downloadCsvRuntime"><span class="material-icons">table_chart</span> Export Runtime CSV</button>
-        <button class="btn" id="downloadCsvMemory"><span class="material-icons">table_chart</span> Export Memory CSV</button>
-        <button class="btn primary" id="toggleYBtn" data-state="log">Y: log</button>
+        <button class="btn primary" id="downloadBtn"><span class="material-icons">download</span> Download</button>
       </div>
     </header>
 
@@ -124,35 +128,109 @@
     <section class="summary-row">
       <div class="card" data-aos="fade-right">
         <h3>Beginner Summary</h3>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_bruteforce</span><p class="muted">When the input size n doubles, the runtime grows by approximately 1.04×, which suggests performance closer to O(log n).</p></div>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_recursive</span><p class="muted">When the input size n doubles, the runtime grows by approximately 1.02×, which suggests performance closer to O(log n).</p></div>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_memo</span><p class="muted">When the input size n doubles, the runtime grows by approximately 1.00×, which suggests performance closer to O(log n).</p></div>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_tab</span><p class="muted">When the input size n doubles, the runtime grows by approximately 1.04×, which suggests performance closer to O(log n).</p></div>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_1d</span><p class="muted">When the input size n doubles, the runtime grows by approximately 0.99×, which suggests performance closer to O(log n).</p></div>
-        
+        <div style="margin-top:8px;">
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_bruteforce</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">Empirical slope ≈ 0.18 — Runtime appears sub-logarithmic / nearly constant.</p></div>
+            </div>
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_recursive</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">Empirical slope ≈ -0.01 — Runtime appears sub-logarithmic / nearly constant.</p></div>
+            </div>
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_memo</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">Empirical slope ≈ -0.01 — Runtime appears sub-logarithmic / nearly constant.</p></div>
+            </div>
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_tab</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">Empirical slope ≈ 0.00 — Runtime appears sub-logarithmic / nearly constant.</p></div>
+            </div>
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_1d</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">Empirical slope ≈ 0.02 — Runtime appears sub-logarithmic / nearly constant.</p></div>
+            </div>
+          
+        </div>
       </div>
       <div class="card" data-aos="fade-up">
         <h3>Interview Summary</h3>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_bruteforce</span><p class="muted">knapsack_bruteforce has estimated time complexity O(log n) and space complexity O(1). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_recursive</span><p class="muted">knapsack_recursive has estimated time complexity O(2^n) and space complexity O(n). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_memo</span><p class="muted">knapsack_memo has estimated time complexity O(2^n) and space complexity O(n). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_tab</span><p class="muted">knapsack_tab has estimated time complexity O(log n) and space complexity O(1). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
-        
-          <div style="margin-top:8px;"><span class="badge">knapsack_1d</span><p class="muted">knapsack_1d has estimated time complexity O(log n) and space complexity O(1). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
-        
+        <div style="margin-top:8px;">
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_bruteforce</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">knapsack_bruteforce has estimated time complexity O(n^2) and space complexity O(1). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
+            </div>
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_recursive</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">knapsack_recursive has estimated time complexity O(2^n) and space complexity O(n). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
+            </div>
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_memo</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">knapsack_memo has estimated time complexity O(n·W) (memoized / DP states) and space complexity O(n·W). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
+            </div>
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_tab</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">knapsack_tab has estimated time complexity O(n·W) and space complexity O(n·W). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
+            </div>
+          
+            <div style="margin:10px 0;">
+              <span class="badge">knapsack_1d</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">knapsack_1d has estimated time complexity O(n·W) and space complexity O(n·W). These results are heuristic; empirical benchmarks confirm scaling.</p></div>
+            </div>
+          
+        </div>
       </div>
       <div class="card" data-aos="fade-left">
         <h3>Quick Stats</h3>
-        <p class="muted">6 input sizes • 6 measured points</p>
+        <p class="muted" style="margin-top:8px;">4 input sizes • 4 measured points</p>
+        
+          <div style="margin-top:8px;">
+            
+              <div style="margin-top:6px;">
+                <strong style="font-size:13px;">knapsack_bruteforce</strong>
+                
+                  <div style="margin-top:6px; color:#a04444; font-size:12px;">⚠️ Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.</div>
+                
+              </div>
+            
+              <div style="margin-top:6px;">
+                <strong style="font-size:13px;">knapsack_recursive</strong>
+                
+                  <div style="margin-top:6px; color:#a04444; font-size:12px;">⚠️ Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.</div>
+                
+              </div>
+            
+              <div style="margin-top:6px;">
+                <strong style="font-size:13px;">knapsack_memo</strong>
+                
+                  <div style="margin-top:6px; color:#a04444; font-size:12px;">⚠️ Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.</div>
+                
+              </div>
+            
+              <div style="margin-top:6px;">
+                <strong style="font-size:13px;">knapsack_tab</strong>
+                
+                  <div style="margin-top:6px; color:#a04444; font-size:12px;">⚠️ Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.; Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.</div>
+                
+              </div>
+            
+              <div style="margin-top:6px;">
+                <strong style="font-size:13px;">knapsack_1d</strong>
+                
+                  <div style="margin-top:6px; color:#a04444; font-size:12px;">⚠️ Input appears multi-parameter (multiple collection-like inputs). For correct empirical scaling (e.g. knapsack where both n and W matter), consider using grid mode (grid_x/grid_y/grid_input_builder) or run separate experiments.</div>
+                
+              </div>
+            
+          </div>
+        
       </div>
     </section>
 
@@ -163,12 +241,14 @@
         <div class="tab" data-tab="runtime"><span class="material-icons">speed</span> Runtime</div>
         <div class="tab" data-tab="memory"><span class="material-icons">storage</span> Memory</div>
         <div class="tab" data-tab="comparison"><span class="material-icons">compare_arrows</span> Comparison</div>
+        <div class="tab" data-tab="grid"><span class="material-icons">grid_on</span> Grid Sweeps</div>
         <div class="tab" data-tab="methods"><span class="material-icons">menu_book</span> Methods</div>
       </div>
       <div class="muted" style="font-size:12px;">Generated by <strong>algoscope</strong></div>
     </nav>
 
-    <main style="margin-top:16px;">
+    <main style="margin-top:18px;">
+      <!-- Overview -->
       <section id="overview" class="panel active" data-aos="fade-up">
         <div class="grid-2">
           <div class="card">
@@ -176,148 +256,162 @@
             
               <div style="margin-top:12px;">
                 <span class="badge">knapsack_bruteforce</span>
-                <div class="muted" style="margin-top:6px;"><p style='margin:6px 0;'><strong>Time</strong>: O(log &bull; <strong>Space</strong>: O(1)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: Divide-and-conquer / halving pattern detected (floor division by 2 / slicing) → logarithmic.
+                <div class="muted" style="margin-top:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(n^2) &bull; <strong>Space</strong>: O(1)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: Nested loops detected → quadratic time.
 These are heuristics; empirical results below provide a practical check.</p></div>
               </div>
             
               <div style="margin-top:12px;">
                 <span class="badge">knapsack_recursive</span>
-                <div class="muted" style="margin-top:6px;"><p style='margin:6px 0;'><strong>Time</strong>: O(2^n) &bull; <strong>Space</strong>: O(n)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: Multiple recursive calls per invocation detected → exponential recursion tree.
+                <div class="muted" style="margin-top:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(2^n) &bull; <strong>Space</strong>: O(n)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: Multiple recursive calls per invocation detected → exponential recursion tree.
 These are heuristics; empirical results below provide a practical check.</p></div>
               </div>
             
               <div style="margin-top:12px;">
                 <span class="badge">knapsack_memo</span>
-                <div class="muted" style="margin-top:6px;"><p style='margin:6px 0;'><strong>Time</strong>: O(2^n) &bull; <strong>Space</strong>: O(n)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: Multiple recursive calls per invocation detected → exponential recursion tree.
+                <div class="muted" style="margin-top:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(n·W) &bull; <strong>Space</strong>: O(n·W)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: Memoization/cache detected → dynamic programming style complexity proportional to number of states.
 These are heuristics; empirical results below provide a practical check.</p></div>
               </div>
             
               <div style="margin-top:12px;">
                 <span class="badge">knapsack_tab</span>
-                <div class="muted" style="margin-top:6px;"><p style='margin:6px 0;'><strong>Time</strong>: O(log &bull; <strong>Space</strong>: O(1)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: Divide-and-conquer / halving pattern detected (floor division by 2 / slicing) → logarithmic.
+                <div class="muted" style="margin-top:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(n·W) &bull; <strong>Space</strong>: O(n·W)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: DP table usage detected → table-filling DP complexity.
 These are heuristics; empirical results below provide a practical check.</p></div>
               </div>
             
               <div style="margin-top:12px;">
                 <span class="badge">knapsack_1d</span>
-                <div class="muted" style="margin-top:6px;"><p style='margin:6px 0;'><strong>Time</strong>: O(log &bull; <strong>Space</strong>: O(1)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: Divide-and-conquer / halving pattern detected (floor division by 2 / slicing) → logarithmic.
+                <div class="muted" style="margin-top:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(n·W) &bull; <strong>Space</strong>: O(n·W)</p><p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: DP table usage detected → table-filling DP complexity.
 These are heuristics; empirical results below provide a practical check.</p></div>
               </div>
             
           </div>
           <div class="card">
             <h3>Performance Overview</h3>
-            <p class="muted">Combined runtime, memory, and rank summary</p>
-            <div id="overview_chart"><div>                            <div id="1de8a713-d1c8-4169-ab62-40236efe012f" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("1de8a713-d1c8-4169-ab62-40236efe012f")) {                    Plotly.newPlot(                        "1de8a713-d1c8-4169-ab62-40236efe012f",                        [{"name":"Runtime (normalized)","x":["knapsack_bruteforce","knapsack_recursive","knapsack_memo","knapsack_tab","knapsack_1d"],"y":[0.8040298331476229,0.693357066084269,0.9622549681213086,0.6269130377644958,0.960093732434529],"type":"bar","xaxis":"x","yaxis":"y"},{"name":"Memory (normalized)","x":["knapsack_bruteforce","knapsack_recursive","knapsack_memo","knapsack_tab","knapsack_1d"],"y":[0.969250645994832,0.966351074718526,0.9642488384099124,0.9689892305696121,0.9863340851797797],"type":"bar","xaxis":"x","yaxis":"y"},{"name":"Ranking (1\u002fmean rank)","x":["knapsack_bruteforce","knapsack_recursive","knapsack_memo","knapsack_tab","knapsack_1d"],"y":[0.2857142857142857,0.25,0.3529411764705882,0.3,0.75],"type":"bar","xaxis":"x","yaxis":"y"},{"hole":0.55,"labels":["knapsack_bruteforce","knapsack_recursive","knapsack_memo","knapsack_tab","knapsack_1d"],"name":"Ranking share","showlegend":false,"values":[0.2857142857142857,0.25,0.3529411764705882,0.3,0.75],"type":"pie","domain":{"x":[0.724,1.0],"y":[0.0,1.0]}}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"xaxis":{"anchor":"y","domain":[0.0,0.644]},"yaxis":{"anchor":"x","domain":[0.0,1.0]},"margin":{"l":20,"r":20,"t":40,"b":20},"legend":{"orientation":"h","yanchor":"bottom","y":-0.15,"xanchor":"left","x":0},"barmode":"group","title":{"text":"Performance Overview"},"height":420},                        {"responsive": true}                    )                };            </script>        </div></div>
+            <p class="muted" style="margin-top:6px;">Combined runtime, memory, and rank summary</p>
+            <div id="overview_chart" style="margin-top:12px;"><div>                            <div id="ff19bb97-2d0e-4eaa-8b32-461a64244a4b" class="plotly-graph-div" style="height:420px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("ff19bb97-2d0e-4eaa-8b32-461a64244a4b")) {                    Plotly.newPlot(                        "ff19bb97-2d0e-4eaa-8b32-461a64244a4b",                        [{"name":"Runtime (normalized)","x":["knapsack_bruteforce","knapsack_recursive","knapsack_memo","knapsack_tab","knapsack_1d"],"y":[0.8208443671641574,0.9821220514965331,0.974382525522153,0.9820985944785853,0.9754725501939949],"type":"bar"},{"name":"Memory (normalized)","x":["knapsack_bruteforce","knapsack_recursive","knapsack_memo","knapsack_tab","knapsack_1d"],"y":[0.9686771938907583,0.9925601169124486,0.9967935871743487,0.9773233713461791,0.9820887659686552],"type":"bar"},{"name":"Ranking (1\u002fmean rank)","x":["knapsack_bruteforce","knapsack_recursive","knapsack_memo","knapsack_tab","knapsack_1d"],"y":[0.2857142857142857,0.2857142857142857,0.4,0.3076923076923077,0.4444444444444444],"type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"margin":{"l":40,"r":20,"t":60,"b":40},"barmode":"group","title":{"text":"Performance Overview"},"height":420},                        {"responsive": true}                    )                };            </script>        </div></div>
           </div>
         </div>
       </section>
 
+      <!-- Complexity -->
       <section id="complexity" class="panel">
         <div class="card">
           <h3>Complexity Analysis</h3>
           
-            <div style="margin-top:12px;">
+            <div style="margin-top:14px;">
               <span class="badge">knapsack_bruteforce</span>
-              <div style="margin-top:6px;">
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Heuristic Guess</h4>
+              <div style="margin-top:8px;">
+                <h4 style="margin:6px 0; font-size:13px; color:#333;">Heuristic Guess</h4>
                 <div class="muted"><p>Heuristic static analysis of <code>knapsack_bruteforce</code>:</p>
-<div><strong><strong>Estimated Time Complexity:</strong> </strong> O(log n)</div>
+<div><strong><strong>Estimated Time Complexity:</strong> </strong> O(n^2)</div>
 <div><strong><strong>Estimated Space Complexity:</strong> </strong> O(1)</div>
-<div><strong>Why:</strong> Divide-and-conquer / halving pattern detected (floor division by 2 / slicing) → logarithmic.</div>
+<div><strong>Why:</strong> Nested loops detected → quadratic time.</div>
 <p>These are heuristics; empirical results below provide a practical check.</p></div>
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Dynamic Guess (empirical)</h4>
-                <div class="muted">Empirical slope ≈ 0.13 -&gt; suggests sub-logarithmic / decreasing.</div>
+
+                <h4 style="margin:10px 0 6px 0; font-size:13px; color:#333;">Dynamic / Empirical Hint</h4>
+                <div class="muted">
+                  
+                  
+                    Empirical slope ≈ 0.18 -> suggests sub-logarithmic / decreasing.
+                  
+                </div>
               </div>
             </div>
-            <div style="margin-top:8px;">
-              <strong>Empirical slope:</strong>
-              <div class="muted" style="font-size:13px;">Empirical slope ≈ 0.13 -> suggests sub-logarithmic / decreasing.</div>
-            </div>
           
-            <div style="margin-top:12px;">
+            <div style="margin-top:14px;">
               <span class="badge">knapsack_recursive</span>
-              <div style="margin-top:6px;">
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Heuristic Guess</h4>
+              <div style="margin-top:8px;">
+                <h4 style="margin:6px 0; font-size:13px; color:#333;">Heuristic Guess</h4>
                 <div class="muted"><p>Heuristic static analysis of <code>knapsack_recursive</code>:</p>
 <div><strong><strong>Estimated Time Complexity:</strong> </strong> O(2^n)</div>
 <div><strong><strong>Estimated Space Complexity:</strong> </strong> O(n)</div>
 <div><strong>Why:</strong> Multiple recursive calls per invocation detected → exponential recursion tree.</div>
 <p>These are heuristics; empirical results below provide a practical check.</p></div>
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Dynamic Guess (empirical)</h4>
-                <div class="muted">Empirical slope ≈ 0.00 -&gt; suggests sub-logarithmic / decreasing.</div>
+
+                <h4 style="margin:10px 0 6px 0; font-size:13px; color:#333;">Dynamic / Empirical Hint</h4>
+                <div class="muted">
+                  
+                  
+                    Empirical slope ≈ -0.01 -> suggests sub-logarithmic / decreasing.
+                  
+                </div>
               </div>
             </div>
-            <div style="margin-top:8px;">
-              <strong>Empirical slope:</strong>
-              <div class="muted" style="font-size:13px;">Empirical slope ≈ 0.00 -> suggests sub-logarithmic / decreasing.</div>
-            </div>
           
-            <div style="margin-top:12px;">
+            <div style="margin-top:14px;">
               <span class="badge">knapsack_memo</span>
-              <div style="margin-top:6px;">
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Heuristic Guess</h4>
+              <div style="margin-top:8px;">
+                <h4 style="margin:6px 0; font-size:13px; color:#333;">Heuristic Guess</h4>
                 <div class="muted"><p>Heuristic static analysis of <code>knapsack_memo</code>:</p>
-<div><strong><strong>Estimated Time Complexity:</strong> </strong> O(2^n)</div>
-<div><strong><strong>Estimated Space Complexity:</strong> </strong> O(n)</div>
-<div><strong>Why:</strong> Multiple recursive calls per invocation detected → exponential recursion tree.</div>
+<div><strong><strong>Estimated Time Complexity:</strong> </strong> O(n·W) (memoized / DP states)</div>
+<div><strong><strong>Estimated Space Complexity:</strong> </strong> O(n·W)</div>
+<div><strong>Why:</strong> Memoization/cache detected → dynamic programming style complexity proportional to number of states.</div>
 <p>These are heuristics; empirical results below provide a practical check.</p></div>
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Dynamic Guess (empirical)</h4>
-                <div class="muted">Empirical slope ≈ -0.01 -&gt; suggests sub-logarithmic / decreasing.</div>
+
+                <h4 style="margin:10px 0 6px 0; font-size:13px; color:#333;">Dynamic / Empirical Hint</h4>
+                <div class="muted">
+                  
+                  
+                    Empirical slope ≈ -0.01 -> suggests sub-logarithmic / decreasing.
+                  
+                </div>
               </div>
             </div>
-            <div style="margin-top:8px;">
-              <strong>Empirical slope:</strong>
-              <div class="muted" style="font-size:13px;">Empirical slope ≈ -0.01 -> suggests sub-logarithmic / decreasing.</div>
-            </div>
           
-            <div style="margin-top:12px;">
+            <div style="margin-top:14px;">
               <span class="badge">knapsack_tab</span>
-              <div style="margin-top:6px;">
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Heuristic Guess</h4>
+              <div style="margin-top:8px;">
+                <h4 style="margin:6px 0; font-size:13px; color:#333;">Heuristic Guess</h4>
                 <div class="muted"><p>Heuristic static analysis of <code>knapsack_tab</code>:</p>
-<div><strong><strong>Estimated Time Complexity:</strong> </strong> O(log n)</div>
-<div><strong><strong>Estimated Space Complexity:</strong> </strong> O(1)</div>
-<div><strong>Why:</strong> Divide-and-conquer / halving pattern detected (floor division by 2 / slicing) → logarithmic.</div>
+<div><strong><strong>Estimated Time Complexity:</strong> </strong> O(n·W)</div>
+<div><strong><strong>Estimated Space Complexity:</strong> </strong> O(n·W)</div>
+<div><strong>Why:</strong> DP table usage detected → table-filling DP complexity.</div>
 <p>These are heuristics; empirical results below provide a practical check.</p></div>
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Dynamic Guess (empirical)</h4>
-                <div class="muted">Empirical slope ≈ -0.17 -&gt; suggests sub-logarithmic / decreasing.</div>
+
+                <h4 style="margin:10px 0 6px 0; font-size:13px; color:#333;">Dynamic / Empirical Hint</h4>
+                <div class="muted">
+                  
+                  
+                    Empirical slope ≈ 0.00 -> suggests sub-logarithmic / decreasing.
+                  
+                </div>
               </div>
-            </div>
-            <div style="margin-top:8px;">
-              <strong>Empirical slope:</strong>
-              <div class="muted" style="font-size:13px;">Empirical slope ≈ -0.17 -> suggests sub-logarithmic / decreasing.</div>
             </div>
           
-            <div style="margin-top:12px;">
+            <div style="margin-top:14px;">
               <span class="badge">knapsack_1d</span>
-              <div style="margin-top:6px;">
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Heuristic Guess</h4>
+              <div style="margin-top:8px;">
+                <h4 style="margin:6px 0; font-size:13px; color:#333;">Heuristic Guess</h4>
                 <div class="muted"><p>Heuristic static analysis of <code>knapsack_1d</code>:</p>
-<div><strong><strong>Estimated Time Complexity:</strong> </strong> O(log n)</div>
-<div><strong><strong>Estimated Space Complexity:</strong> </strong> O(1)</div>
-<div><strong>Why:</strong> Divide-and-conquer / halving pattern detected (floor division by 2 / slicing) → logarithmic.</div>
+<div><strong><strong>Estimated Time Complexity:</strong> </strong> O(n·W)</div>
+<div><strong><strong>Estimated Space Complexity:</strong> </strong> O(n·W)</div>
+<div><strong>Why:</strong> DP table usage detected → table-filling DP complexity.</div>
 <p>These are heuristics; empirical results below provide a practical check.</p></div>
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Dynamic Guess (empirical)</h4>
-                <div class="muted">Empirical slope ≈ -0.02 -&gt; suggests sub-logarithmic / decreasing.</div>
+
+                <h4 style="margin:10px 0 6px 0; font-size:13px; color:#333;">Dynamic / Empirical Hint</h4>
+                <div class="muted">
+                  
+                  
+                    Empirical slope ≈ 0.02 -> suggests sub-logarithmic / decreasing.
+                  
+                </div>
               </div>
-            </div>
-            <div style="margin-top:8px;">
-              <strong>Empirical slope:</strong>
-              <div class="muted" style="font-size:13px;">Empirical slope ≈ -0.02 -> suggests sub-logarithmic / decreasing.</div>
             </div>
           
         </div>
       </section>
 
+      <!-- Runtime -->
       <section id="runtime" class="panel">
-        <div class="card"><h3>Runtime Chart</h3><div id="runtime_chart"><div>                            <div id="e3da28ad-8aee-49cf-a7ae-6b3a5f495646" class="plotly-graph-div" style="height:620px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("e3da28ad-8aee-49cf-a7ae-6b3a5f495646")) {                    Plotly.newPlot(                        "e3da28ad-8aee-49cf-a7ae-6b3a5f495646",                        [{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.14284706872870073,0.13539369755234879,0.137287805906079,0.14933105477559255,0.1537045983700315,0.17191944202306092],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_bruteforce 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.1337963479603872,0.13397074714182258,0.13411424949155074,0.1311861945149284,0.13161804094504717,0.1630985306803413],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_bruteforce","x":[5,7,9,11,13,15],"y":[0.13832170834454396,0.13468222234708568,0.13570102769881487,0.14025862464526048,0.14266131965753934,0.1675089863517011],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.13914680348490793,0.16335620951265903,0.379470771322508,0.14371421270828688,0.16972239377095177,0.14451732561883296],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_recursive 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.13432502987702571,0.12163792982339054,0.014946256697938476,0.13355681535652536,0.12499313367412611,0.13025445244936185],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_recursive","x":[5,7,9,11,13,15],"y":[0.13673591668096682,0.14249706966802478,0.19720851401022324,0.13863551403240612,0.14735776372253895,0.1373858890340974],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.1393582999848751,0.1482588079445319,0.1565001083851478,0.13948399021020702,0.13987014502277112,0.1368200440325431],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_memo 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.1346519499719463,0.12673794203460154,0.12539350295718796,0.13333292640704741,0.13419929971928263,0.13443348396327676],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_memo","x":[5,7,9,11,13,15],"y":[0.1370051249784107,0.1374983749895667,0.14094680567116788,0.13640845830862722,0.13703472237102687,0.13562676399790993],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.14619572823200944,0.5053246632507282,0.14206336643389847,0.14113509314908124,0.13710704262565437,0.138912321603747],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_tab 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.12990732640694258,-0.0697448019692885,0.1337321328946254,0.13377865689654117,0.13596365139933064,0.1350046784385276],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_tab","x":[5,7,9,11,13,15],"y":[0.138051527319476,0.21778993064071983,0.13789774966426194,0.1374568750228112,0.1365353470124925,0.1369585000211373],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.1428327787320192,0.15020735580789632,0.13698022834011558,0.13709646769192568,0.13705179855970742,0.13266634568431984],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_1d 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[0.12766769323866814,0.12379928224715005,0.13601732690521934,0.1347741436211839,0.13434975741619168,0.13040571015778668],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_1d","x":[5,7,9,11,13,15],"y":[0.13525023598534366,0.1370033190275232,0.13649877762266746,0.1359353056565548,0.13570077798794955,0.13153602792105326],"type":"scatter"},{"line":{"dash":"dash"},"mode":"lines","name":"ref: 1","x":[5,7,9,11,13,15],"y":{"dtype":"f8","bdata":"mpkZvZsmwj+amRm9mybCP5qZGb2bJsI\u002fmpkZvZsmwj+amRm9mybCP5qZGb2bJsI\u002f"},"type":"scatter"},{"line":{"dash":"dash"},"mode":"lines","name":"ref: n","x":[5,7,9,11,13,15],"y":{"dtype":"f8","bdata":"eHd3UXozqD8HOm2f1fCwP1O4Hhbux7U\u002fnjbQjAafuj\u002fptIEDH3a\u002fP5qZGb2bJsI\u002f"},"type":"scatter"},{"line":{"dash":"dash"},"mode":"lines","name":"ref: n**2","x":[5,7,9,11,13,15],"y":{"dtype":"f8","bdata":"UPqki1EikD8OKBChbJ+fPzDdJLQdI6o\u002fUmxUeK+Fsz8wAwoDPUS7P5qZGb2bJsI\u002f"},"type":"scatter"},{"line":{"dash":"dash"},"mode":"lines","name":"ref: 2**n","x":[5,7,9,11,13,15],"y":{"dtype":"f8","bdata":"mpkZvZsmIj+amRm9myZCP5qZGb2bJmI\u002fmpkZvZsmgj+amRm9myaiP5qZGb2bJsI\u002f"},"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"transition":{"duration":450,"easing":"cubic-in-out"},"legend":{"orientation":"h","yanchor":"bottom","y":-0.2,"xanchor":"left","x":0},"title":{"text":"0\u002f1 Knapsack Approaches \u2014 Runtime"},"xaxis":{"title":{"text":"Input size (n)"},"type":"linear"},"yaxis":{"title":{"text":"Time (seconds)"},"type":"log"},"hovermode":"x unified"},                        {"responsive": true}                    )                };            </script>        </div></div></div>
+        <div class="card"><h3>Runtime Chart</h3><div id="runtime_chart" style="margin-top:12px;"><div>                            <div id="4bd024df-9e40-4a3d-b209-8d91a4da1dcf" class="plotly-graph-div" style="height:520px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("4bd024df-9e40-4a3d-b209-8d91a4da1dcf")) {                    Plotly.newPlot(                        "4bd024df-9e40-4a3d-b209-8d91a4da1dcf",                        [{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[0.14119322543029975,0.14461482604719825,0.27314775156673254,0.17339266404720102],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_bruteforce 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11],"y":[0.1265603019918254,0.12848706270503377,0.053045054442470665,0.12067730861815855],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_bruteforce","x":[5,7,9,11],"y":[0.13387676371106258,0.136550944376116,0.1630964030046016,0.14703498633267978],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[0.14255895216401435,0.14373512625945734,0.13982052965016145,0.137593658047182],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_recursive 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11],"y":[0.1300755205339589,0.1312528730903752,0.13025124840822339,0.1329968694016212],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_recursive","x":[5,7,9,11],"y":[0.13631723634898663,0.13749399967491627,0.13503588902919242,0.1352952637244016],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[0.14656217822175185,0.13544500343617408,0.142239697731346,0.1392847427792769],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_memo 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11],"y":[0.12959587776731987,0.13363858060174574,0.12726438566676265,0.13454395259371185],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_memo","x":[5,7,9,11],"y":[0.13807902799453586,0.1345417920189599,0.13475204169905433,0.13691434768649438],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[0.14004164339947872,0.14727762302363523,0.13716974525822273,0.14019403023027555],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_tab 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11],"y":[0.13228341258468057,0.12671598769123743,0.13287697680805555,0.1347750243885748],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_tab","x":[5,7,9,11],"y":[0.13616252799207965,0.13699680535743633,0.13502336103313914,0.13748452730942518],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[0.13837464780982095,0.1384251455881391,0.1400825602838916,0.1393485287850431],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_1d 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11],"y":[0.1287581309198016,0.13542446573767128,0.13293996705690797,0.13101399995445395],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_1d","x":[5,7,9,11],"y":[0.13356638936481127,0.13692480566290519,0.13651126367039979,0.13518126436974853],"type":"scatter"},{"line":{"dash":"dash"},"mode":"lines","name":"ref: 1","x":[5,7,9,11],"y":{"dtype":"f8","bdata":"7u5uAYG2wT\u002fu7m4BgbbBP+7ubgGBtsE\u002f7u5uAYG2wT8="},"type":"scatter"},{"line":{"dash":"dash"},"mode":"lines","name":"ref: n","x":[5,7,9,11],"y":{"dtype":"f8","bdata":"Bx98u0YasD+jXkfTL4u2Pz+eEusY\u002fLw\u002f7u5uAYG2wT8="},"type":"scatter"},{"line":{"dash":"dash"},"mode":"lines","name":"ref: n**2","x":[5,7,9,11],"y":{"dtype":"f8","bdata":"U9ubPQxHnT8uYYmYJbGsP+9SbB39trc\u002f7u5uAYG2wT8="},"type":"scatter"},{"line":{"dash":"dash"},"mode":"lines","name":"ref: 2**n","x":[5,7,9,11],"y":{"dtype":"f8","bdata":"7u5uAYG2YT\u002fu7m4BgbaBP+7ubgGBtqE\u002f7u5uAYG2wT8="},"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"legend":{"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"left","x":0.01},"margin":{"l":60,"r":20,"t":60,"b":60},"title":{"text":"0\u002f1 Knapsack Approaches \u2014 Runtime"},"xaxis":{"title":{"text":"Input size (n)"},"type":"linear"},"yaxis":{"title":{"text":"Time (seconds)"},"type":"log"},"hovermode":"x unified","height":520},                        {"responsive": true}                    )                };            </script>        </div></div></div>
       </section>
 
+      <!-- Memory -->
       <section id="memory" class="panel">
-        <div class="card"><h3>Memory Chart</h3><div id="memory_chart"><div>                            <div id="f71f79d3-2e49-490c-bb8f-74971dbf17f9" class="plotly-graph-div" style="height:620px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("f71f79d3-2e49-490c-bb8f-74971dbf17f9")) {                    Plotly.newPlot(                        "f71f79d3-2e49-490c-bb8f-74971dbf17f9",                        [{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[43590288.731740564,42498972.507499374,43476114.35565542,43871219.226395175,43760178.82192782,43553965.5330516],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_bruteforce 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[40951151.268259436,39442872.825833954,39645378.97767791,39425036.773604825,39273933.17807218,38759250.4669484],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_bruteforce","x":[5,7,9,11,13,15],"y":[42270720.0,40970922.666666664,41560746.666666664,41648128.0,41517056.0,41156608.0],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[44185887.58701323,43398192.77426993,45981081.04430977,43834784.00961827,42839027.94410327,43418896.139046066],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_recursive 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[39001141.7463201,39690532.5590634,39390481.6223569,38664117.32371506,41210892.05589673,39331226.527620606],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_recursive","x":[5,7,9,11,13,15],"y":[41593514.666666664,41544362.666666664,42685781.333333336,41249450.666666664,42024960.0,41375061.333333336],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[42024545.48785522,42649144.98674551,44804425.25765147,41601661.4207756,42035047.08266667,41773049.72238632],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_memo 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[40070217.17881145,40319431.01325449,39824396.07568186,40001581.24589107,39732035.584,40146950.27761368],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_memo","x":[5,7,9,11,13,15],"y":[41047381.333333336,41484288.0,42314410.666666664,40801621.333333336,40883541.333333336,40960000.0],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[42838495.39286102,45415492.71404163,41493430.94124919,43309729.913288206,41513740.97066667,41496679.90985204],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_tab 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[40392224.60713898,38765499.28595837,40120734.39208414,38937950.086711794,40056733.696,40882072.09014796],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_tab","x":[5,7,9,11,13,15],"y":[41615360.0,42090496.0,40807082.666666664,41123840.0,40785237.333333336,41189376.0],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11,13,15],"y":[42426348.710565224,42713737.89866667,41838123.97201846,41472202.06933333,40599552.0,41517690.638743766],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_1d 95% CI","opacity":0.15,"showlegend":false,"x":[5,7,9,11,13,15],"y":[39821331.289434776,39282720.768,40191102.69464821,40109195.264,40599552.0,40806448.027922906],"type":"scatter"},{"mode":"lines+markers","name":"knapsack_1d","x":[5,7,9,11,13,15],"y":[41123840.0,40998229.333333336,41014613.333333336,40790698.666666664,40599552.0,41162069.333333336],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"transition":{"duration":450,"easing":"cubic-in-out"},"legend":{"orientation":"h","yanchor":"bottom","y":-0.2,"xanchor":"left","x":0},"title":{"text":"0\u002f1 Knapsack Approaches \u2014 Peak Memory"},"xaxis":{"title":{"text":"Input size (n)"},"type":"linear"},"yaxis":{"title":{"text":"Bytes"},"type":"linear"},"hovermode":"x unified"},                        {"responsive": true}                    )                };            </script>        </div></div></div>
+        <div class="card"><h3>Memory Chart</h3><div id="memory_chart" style="margin-top:12px;"><div>                            <div id="e4dc1c04-07c7-4674-809e-b316c68d168a" class="plotly-graph-div" style="height:520px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("e4dc1c04-07c7-4674-809e-b316c68d168a")) {                    Plotly.newPlot(                        "e4dc1c04-07c7-4674-809e-b316c68d168a",                        [{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[41484975.99247245,43019750.810195945,43007245.17188837,45425591.557260156],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_bruteforce 95% CI","opacity":0.12,"showlegend":false,"x":[5,7,9,11],"y":[40260261.34086088,39763139.85647073,40725917.494778305,38962931.109406516],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_bruteforce","x":[5,7,9,11],"y":[40872618.666666664,41391445.333333336,41866581.333333336,42194261.333333336],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[41177623.21066667,41947843.86136693,41948550.117388554,41496199.168],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_recursive 95% CI","opacity":0.12,"showlegend":false,"x":[5,7,9,11],"y":[40425619.456,39972156.13863307,40266361.882611446,40227192.832],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_recursive","x":[5,7,9,11],"y":[40801621.333333336,40960000.0,41107456.0,40861696.0],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[41447927.56087229,40747008.0,41477678.48236713,40912031.24139388],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_memo 95% CI","opacity":0.12,"showlegend":false,"x":[5,7,9,11],"y":[40308232.43912771,40747008.0,40278481.51763287,40603830.09193945],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_memo","x":[5,7,9,11],"y":[40878080.0,40747008.0,40878080.0,40757930.666666664],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[41905092.40321125,42757456.9566441,40766701.568,41402143.720186085],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_tab 95% CI","opacity":0.12,"showlegend":false,"x":[5,7,9,11],"y":[39971216.93012208,40571567.0433559,40672701.09866667,40364938.94648059],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_tab","x":[5,7,9,11],"y":[40938154.666666664,41664512.0,40719701.333333336,40883541.333333336],"type":"scatter"},{"hoverinfo":"skip","line":{"width":0},"showlegend":false,"x":[5,7,9,11],"y":[42295194.94922699,43091454.29844157,40772162.90133333,41977595.247837305],"type":"scatter"},{"fill":"tonexty","hoverinfo":"skip","line":{"width":0},"name":"knapsack_1d 95% CI","opacity":0.12,"showlegend":false,"x":[5,7,9,11],"y":[39755877.05077301,39844353.70155843,40678162.432,40237316.752162695],"type":"scatter"},{"marker":{"size":6},"mode":"lines+markers","name":"knapsack_1d","x":[5,7,9,11],"y":[41025536.0,41467904.0,40725162.666666664,41107456.0],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"legend":{"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"left","x":0.01},"margin":{"l":60,"r":20,"t":60,"b":60},"title":{"text":"0\u002f1 Knapsack Approaches \u2014 Peak Memory"},"xaxis":{"title":{"text":"Input size (n)"},"type":"linear"},"yaxis":{"title":{"text":"Bytes"},"type":"linear"},"hovermode":"x unified","height":520},                        {"responsive": true}                    )                };            </script>        </div></div></div>
       </section>
 
+      <!-- Comparison -->
       <section id="comparison" class="panel">
         <div class="card"><h3>Comparison Summary</h3>
           <table>
@@ -327,51 +421,51 @@ These are heuristics; empirical results below provide a practical check.</p></di
               <tr>
                 <td class="mono">5</td>
                 <td>knapsack_1d</td>
-                <td>knapsack_bruteforce</td>
+                <td>knapsack_memo</td>
                 <td>
-                  <span class="badge">knapsack_bruteforce: 3.50</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_bruteforce: 3.50</span>
                 
-                  <span class="badge">knapsack_recursive: 4.00</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_recursive: 3.50</span>
                 
-                  <span class="badge">knapsack_memo: 2.83</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_memo: 2.50</span>
                 
-                  <span class="badge">knapsack_tab: 3.33</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_tab: 3.25</span>
                 
-                  <span class="badge">knapsack_1d: 1.33</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_1d: 2.25</span>
                 </td>
               </tr>
             
               <tr>
                 <td class="mono">7</td>
-                <td>knapsack_bruteforce</td>
-                <td>knapsack_tab</td>
+                <td>knapsack_memo</td>
+                <td>knapsack_recursive</td>
                 <td>
-                  <span class="badge">knapsack_bruteforce: 3.50</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_bruteforce: 3.50</span>
                 
-                  <span class="badge">knapsack_recursive: 4.00</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_recursive: 3.50</span>
                 
-                  <span class="badge">knapsack_memo: 2.83</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_memo: 2.50</span>
                 
-                  <span class="badge">knapsack_tab: 3.33</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_tab: 3.25</span>
                 
-                  <span class="badge">knapsack_1d: 1.33</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_1d: 2.25</span>
                 </td>
               </tr>
             
               <tr>
                 <td class="mono">9</td>
+                <td>knapsack_memo</td>
                 <td>knapsack_bruteforce</td>
-                <td>knapsack_recursive</td>
                 <td>
-                  <span class="badge">knapsack_bruteforce: 3.50</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_bruteforce: 3.50</span>
                 
-                  <span class="badge">knapsack_recursive: 4.00</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_recursive: 3.50</span>
                 
-                  <span class="badge">knapsack_memo: 2.83</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_memo: 2.50</span>
                 
-                  <span class="badge">knapsack_tab: 3.33</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_tab: 3.25</span>
                 
-                  <span class="badge">knapsack_1d: 1.33</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_1d: 2.25</span>
                 </td>
               </tr>
             
@@ -380,49 +474,15 @@ These are heuristics; empirical results below provide a practical check.</p></di
                 <td>knapsack_1d</td>
                 <td>knapsack_bruteforce</td>
                 <td>
-                  <span class="badge">knapsack_bruteforce: 3.50</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_bruteforce: 3.50</span>
                 
-                  <span class="badge">knapsack_recursive: 4.00</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_recursive: 3.50</span>
                 
-                  <span class="badge">knapsack_memo: 2.83</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_memo: 2.50</span>
                 
-                  <span class="badge">knapsack_tab: 3.33</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_tab: 3.25</span>
                 
-                  <span class="badge">knapsack_1d: 1.33</span>
-                </td>
-              </tr>
-            
-              <tr>
-                <td class="mono">13</td>
-                <td>knapsack_1d</td>
-                <td>knapsack_recursive</td>
-                <td>
-                  <span class="badge">knapsack_bruteforce: 3.50</span>
-                
-                  <span class="badge">knapsack_recursive: 4.00</span>
-                
-                  <span class="badge">knapsack_memo: 2.83</span>
-                
-                  <span class="badge">knapsack_tab: 3.33</span>
-                
-                  <span class="badge">knapsack_1d: 1.33</span>
-                </td>
-              </tr>
-            
-              <tr>
-                <td class="mono">15</td>
-                <td>knapsack_1d</td>
-                <td>knapsack_bruteforce</td>
-                <td>
-                  <span class="badge">knapsack_bruteforce: 3.50</span>
-                
-                  <span class="badge">knapsack_recursive: 4.00</span>
-                
-                  <span class="badge">knapsack_memo: 2.83</span>
-                
-                  <span class="badge">knapsack_tab: 3.33</span>
-                
-                  <span class="badge">knapsack_1d: 1.33</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">knapsack_1d: 2.25</span>
                 </td>
               </tr>
             
@@ -431,23 +491,36 @@ These are heuristics; empirical results below provide a practical check.</p></di
         </div>
       </section>
 
+      <!-- Grid Sweeps / Heatmaps -->
+      <section id="grid" class="panel">
+        <div class="card">
+          <h3>Grid Sweeps & Heatmaps</h3>
+          <p class="muted" style="margin-top:6px;">Heatmaps show runtime behavior across two varying parameters (e.g., items n vs capacity W).</p>
+          <div style="margin-top:12px;">
+            
+              <p class="muted">No grid sweeps were executed for this report. Provide <code>grid_x</code>, <code>grid_y</code>, and <code>grid_input_builder</code> to enable heatmaps.</p>
+            
+          </div>
+        </div>
+      </section>
+
+      <!-- Methods -->
       <section id="methods" class="panel">
-        <div class="card"><h3>Methods & Notes</h3><div class="code"><ul>
-<li><strong>Runtime</strong> measured with <code>time.perf_counter()</code>; each (function, n) pair ran 3 times after 2 warmup iterations. GC was enabled and collected before runs.</li>
+        <div class="card"><h3>Methods & Notes</h3><div class="code" style="margin-top:8px;"><ul>
+<li><strong>Runtime</strong> measured with <code>time.perf_counter()</code>; each (function, n) pair ran 3 times after 1 warmup iterations. GC was enabled and collected before runs.</li>
 <li><strong>Memory</strong> peak measured with <code>tracemalloc</code> backend. When <code>rss</code> is selected and <code>psutil</code> is installed, a child process is monitored for RSS (recommended for realistic peak memory).</li>
 <li><strong>Confidence Intervals:</strong> T at 95% confidence.</li>
 </ul></div></div>
       </section>
     </main>
 
-    <footer class="footer"><p>Generated by <strong>algoscope</strong>.</p></footer>
+    <footer class="footer"><p>Generated by <strong>algoscope</strong> — built for clear, beginner-friendly algorithm analysis.</p></footer>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function(){
       if (window.AOS) { AOS.init({ once: true, duration: 500 }); }
-
       const tabs = document.querySelectorAll('.tab'); const panels = document.querySelectorAll('.panel');
       tabs.forEach(t => { t.addEventListener('click', () => {
         tabs.forEach(x => x.classList.remove('active')); t.classList.add('active');
@@ -455,79 +528,16 @@ These are heuristics; empirical results below provide a practical check.</p></di
         panels.forEach(p => { p.classList.toggle('active', p.id === name); });
         document.querySelector('main').scrollIntoView({behavior: 'smooth'});
       });});
-
-      const downloadHtmlBtn = document.getElementById('downloadHtmlBtn');
-      if (downloadHtmlBtn) {
-        downloadHtmlBtn.addEventListener('click', () => {
-          const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+      // Download button (save page)
+      const dl = document.getElementById('downloadBtn');
+      if (dl) {
+        dl.addEventListener('click', () => {
+          const title = document.title || 'algoscope-report';
+          const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
+          const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = (document.title || 'algoscope-report') + '.html';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        });
-      }
-
-      const runtimeJson = [{"n": 5, "knapsack_bruteforce": {"mean": 0.13832170834454396, "lower": 0.1337963479603872, "upper": 0.14284706872870073}, "knapsack_recursive": {"mean": 0.13673591668096682, "lower": 0.13432502987702571, "upper": 0.13914680348490793}, "knapsack_memo": {"mean": 0.1370051249784107, "lower": 0.1346519499719463, "upper": 0.1393582999848751}, "knapsack_tab": {"mean": 0.138051527319476, "lower": 0.12990732640694258, "upper": 0.14619572823200944}, "knapsack_1d": {"mean": 0.13525023598534366, "lower": 0.12766769323866814, "upper": 0.1428327787320192}}, {"n": 7, "knapsack_bruteforce": {"mean": 0.13468222234708568, "lower": 0.13397074714182258, "upper": 0.13539369755234879}, "knapsack_recursive": {"mean": 0.14249706966802478, "lower": 0.12163792982339054, "upper": 0.16335620951265903}, "knapsack_memo": {"mean": 0.1374983749895667, "lower": 0.12673794203460154, "upper": 0.1482588079445319}, "knapsack_tab": {"mean": 0.21778993064071983, "lower": -0.0697448019692885, "upper": 0.5053246632507282}, "knapsack_1d": {"mean": 0.1370033190275232, "lower": 0.12379928224715005, "upper": 0.15020735580789632}}, {"n": 9, "knapsack_bruteforce": {"mean": 0.13570102769881487, "lower": 0.13411424949155074, "upper": 0.137287805906079}, "knapsack_recursive": {"mean": 0.19720851401022324, "lower": 0.014946256697938476, "upper": 0.379470771322508}, "knapsack_memo": {"mean": 0.14094680567116788, "lower": 0.12539350295718796, "upper": 0.1565001083851478}, "knapsack_tab": {"mean": 0.13789774966426194, "lower": 0.1337321328946254, "upper": 0.14206336643389847}, "knapsack_1d": {"mean": 0.13649877762266746, "lower": 0.13601732690521934, "upper": 0.13698022834011558}}, {"n": 11, "knapsack_bruteforce": {"mean": 0.14025862464526048, "lower": 0.1311861945149284, "upper": 0.14933105477559255}, "knapsack_recursive": {"mean": 0.13863551403240612, "lower": 0.13355681535652536, "upper": 0.14371421270828688}, "knapsack_memo": {"mean": 0.13640845830862722, "lower": 0.13333292640704741, "upper": 0.13948399021020702}, "knapsack_tab": {"mean": 0.1374568750228112, "lower": 0.13377865689654117, "upper": 0.14113509314908124}, "knapsack_1d": {"mean": 0.1359353056565548, "lower": 0.1347741436211839, "upper": 0.13709646769192568}}, {"n": 13, "knapsack_bruteforce": {"mean": 0.14266131965753934, "lower": 0.13161804094504717, "upper": 0.1537045983700315}, "knapsack_recursive": {"mean": 0.14735776372253895, "lower": 0.12499313367412611, "upper": 0.16972239377095177}, "knapsack_memo": {"mean": 0.13703472237102687, "lower": 0.13419929971928263, "upper": 0.13987014502277112}, "knapsack_tab": {"mean": 0.1365353470124925, "lower": 0.13596365139933064, "upper": 0.13710704262565437}, "knapsack_1d": {"mean": 0.13570077798794955, "lower": 0.13434975741619168, "upper": 0.13705179855970742}}, {"n": 15, "knapsack_bruteforce": {"mean": 0.1675089863517011, "lower": 0.1630985306803413, "upper": 0.17191944202306092}, "knapsack_recursive": {"mean": 0.1373858890340974, "lower": 0.13025445244936185, "upper": 0.14451732561883296}, "knapsack_memo": {"mean": 0.13562676399790993, "lower": 0.13443348396327676, "upper": 0.1368200440325431}, "knapsack_tab": {"mean": 0.1369585000211373, "lower": 0.1350046784385276, "upper": 0.138912321603747}, "knapsack_1d": {"mean": 0.13153602792105326, "lower": 0.13040571015778668, "upper": 0.13266634568431984}}];
-      const memoryJson = [{"n": 5, "knapsack_bruteforce": {"mean": 42270720.0, "lower": 40951151.268259436, "upper": 43590288.731740564}, "knapsack_recursive": {"mean": 41593514.666666664, "lower": 39001141.7463201, "upper": 44185887.58701323}, "knapsack_memo": {"mean": 41047381.333333336, "lower": 40070217.17881145, "upper": 42024545.48785522}, "knapsack_tab": {"mean": 41615360.0, "lower": 40392224.60713898, "upper": 42838495.39286102}, "knapsack_1d": {"mean": 41123840.0, "lower": 39821331.289434776, "upper": 42426348.710565224}}, {"n": 7, "knapsack_bruteforce": {"mean": 40970922.666666664, "lower": 39442872.825833954, "upper": 42498972.507499374}, "knapsack_recursive": {"mean": 41544362.666666664, "lower": 39690532.5590634, "upper": 43398192.77426993}, "knapsack_memo": {"mean": 41484288.0, "lower": 40319431.01325449, "upper": 42649144.98674551}, "knapsack_tab": {"mean": 42090496.0, "lower": 38765499.28595837, "upper": 45415492.71404163}, "knapsack_1d": {"mean": 40998229.333333336, "lower": 39282720.768, "upper": 42713737.89866667}}, {"n": 9, "knapsack_bruteforce": {"mean": 41560746.666666664, "lower": 39645378.97767791, "upper": 43476114.35565542}, "knapsack_recursive": {"mean": 42685781.333333336, "lower": 39390481.6223569, "upper": 45981081.04430977}, "knapsack_memo": {"mean": 42314410.666666664, "lower": 39824396.07568186, "upper": 44804425.25765147}, "knapsack_tab": {"mean": 40807082.666666664, "lower": 40120734.39208414, "upper": 41493430.94124919}, "knapsack_1d": {"mean": 41014613.333333336, "lower": 40191102.69464821, "upper": 41838123.97201846}}, {"n": 11, "knapsack_bruteforce": {"mean": 41648128.0, "lower": 39425036.773604825, "upper": 43871219.226395175}, "knapsack_recursive": {"mean": 41249450.666666664, "lower": 38664117.32371506, "upper": 43834784.00961827}, "knapsack_memo": {"mean": 40801621.333333336, "lower": 40001581.24589107, "upper": 41601661.4207756}, "knapsack_tab": {"mean": 41123840.0, "lower": 38937950.086711794, "upper": 43309729.913288206}, "knapsack_1d": {"mean": 40790698.666666664, "lower": 40109195.264, "upper": 41472202.06933333}}, {"n": 13, "knapsack_bruteforce": {"mean": 41517056.0, "lower": 39273933.17807218, "upper": 43760178.82192782}, "knapsack_recursive": {"mean": 42024960.0, "lower": 41210892.05589673, "upper": 42839027.94410327}, "knapsack_memo": {"mean": 40883541.333333336, "lower": 39732035.584, "upper": 42035047.08266667}, "knapsack_tab": {"mean": 40785237.333333336, "lower": 40056733.696, "upper": 41513740.97066667}, "knapsack_1d": {"mean": 40599552.0, "lower": 40599552.0, "upper": 40599552.0}}, {"n": 15, "knapsack_bruteforce": {"mean": 41156608.0, "lower": 38759250.4669484, "upper": 43553965.5330516}, "knapsack_recursive": {"mean": 41375061.333333336, "lower": 39331226.527620606, "upper": 43418896.139046066}, "knapsack_memo": {"mean": 40960000.0, "lower": 40146950.27761368, "upper": 41773049.72238632}, "knapsack_tab": {"mean": 41189376.0, "lower": 40882072.09014796, "upper": 41496679.90985204}, "knapsack_1d": {"mean": 41162069.333333336, "lower": 40806448.027922906, "upper": 41517690.638743766}}];
-
-      function toCSV(arr) {
-        if (!arr || !arr.length) return '';
-        const labels = Object.keys(arr[0]).filter(k => k !== 'n');
-        const header = ['n', ...labels];
-        const rows = arr.map(r => {
-          const n = r.n;
-          const cells = labels.map(l => {
-            const c = r[l];
-            if (c && typeof c === 'object' && 'mean' in c) {
-              return c.mean;
-            }
-            return c;
-          });
-          return [n, ...cells];
-        });
-        return [header.join(','), ...rows.map(r => r.join(','))].join('\n');
-      }
-
-      const dlRT = document.getElementById('downloadCsvRuntime');
-      if (dlRT) {
-        dlRT.addEventListener('click', () => {
-          const csv = toCSV(runtimeJson);
-          const b = new Blob([csv], {type: 'text/csv'});
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(b);
-          a.download = (document.title || 'runtime') + '-runtime.csv';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        });
-      }
-
-      const dlMem = document.getElementById('downloadCsvMemory');
-      if (dlMem) {
-        dlMem.addEventListener('click', () => {
-          const csv = toCSV(memoryJson);
-          const b = new Blob([csv], {type: 'text/csv'});
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(b);
-          a.download = (document.title || 'memory') + '-memory.csv';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        });
-      }
-
-      const toggleYBtn = document.getElementById('toggleYBtn');
-      if (toggleYBtn) {
-        toggleYBtn.addEventListener('click', () => {
-          const container = document.querySelector('#runtime_chart .js-plotly-plot');
-          if (!container || !window.Plotly) return;
-          const current = toggleYBtn.getAttribute('data-state') === 'log' ? 'log' : 'linear';
-          const next = current === 'log' ? 'linear' : 'log';
-          window.Plotly.relayout(container, {'yaxis.type': next});
-          toggleYBtn.textContent = 'Y: ' + (next === 'log' ? 'log' : 'linear');
-          toggleYBtn.setAttribute('data-state', next);
+          a.href = url; a.download = title.replace(/\s+/g,'_') + '.html'; document.body.appendChild(a); a.click();
+          setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1500);
         });
       }
     });

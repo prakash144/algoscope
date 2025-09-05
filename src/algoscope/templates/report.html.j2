@@ -4,96 +4,103 @@
   <meta charset="utf-8"/>
   <title>{{ title }}</title>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-  <!-- Include Plotly from CDN once for reliability in all environments -->
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <!-- Plotly JS (CDN) - included once for the whole report -->
+  <script src="https://cdn.plot.ly/plotly-2.22.0.min.js"></script>
 
+  <!-- AOS for subtle scroll animation -->
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
   <style>
     :root{
-      --bg: #f6f8fb;
+      --bg: linear-gradient(180deg,#f7f9ff 0%, #eef4ff 100%);
       --card: #ffffff;
       --muted: #6b7280;
       --accent: #3366ff;
       --accent-2: #00bfa6;
       --radius: 14px;
-      --shadow-sm: 0 3px 8px rgba(18,24,40,0.06);
-      --shadow-md: 0 6px 18px rgba(18,24,40,0.1);
-      --max-width: 1180px;
+      --shadow-sm: 0 6px 18px rgba(18,24,40,0.06);
+      --shadow-md: 0 12px 30px rgba(18,24,40,0.10);
+      --max-width: 1280px;
     }
     html,body{height:100%;}
     body{
       margin:0;
-      font-family: "Inter", system-ui, sans-serif;
-      background: linear-gradient(180deg, #f6f8fb 0%, #eef2ff 100%);
-      color: #0f172a;
-      padding: 20px;
+      font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: var(--bg);
+      color: #081123;
+      padding: 28px;
       display:flex;
       justify-content:center;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
     }
     .container{ width:100%; max-width:var(--max-width); margin: 12px; }
 
-    header.topbar{ display:flex; align-items:center; justify-content:space-between; gap: 16px; margin-bottom:20px; }
-    .brand{ display:flex; gap:12px; align-items:center; }
+    header.topbar{ display:flex; align-items:center; justify-content:space-between; gap: 16px; margin-bottom:22px; }
+    .brand{ display:flex; gap:14px; align-items:center; }
     .logo{
-      width:52px; height:52px; display:grid; place-items:center;
-      background:linear-gradient(135deg,var(--accent),#6b8cff);
-      color:white; border-radius:14px; box-shadow:var(--shadow-sm);
-      font-weight:700; font-size:20px;
+      width:64px; height:64px; display:grid; place-items:center;
+      background:linear-gradient(135deg,var(--accent), #6b8cff);
+      color:white; border-radius:16px; box-shadow:var(--shadow-sm);
+      font-weight:800; font-size:22px;
     }
-    .title-block h1{ margin:0; font-size:20px; font-weight:700; }
+    .title-block h1{ margin:0; font-size:18px; font-weight:700; letter-spacing: -0.2px; }
     .title-block p{ margin:0; color:var(--muted); font-size:13px; }
 
-    .actions{ display:flex; gap:8px; align-items:center; }
+    .actions{ display:flex; gap:10px; align-items:center; }
     .btn{
-      background:var(--card); border:1px solid rgba(13,18,36,0.08);
-      padding:8px 12px; border-radius:10px; cursor:pointer;
+      background:var(--card); border:1px solid rgba(13,18,36,0.06);
+      padding:10px 14px; border-radius:10px; cursor:pointer;
       box-shadow:var(--shadow-sm); display:inline-flex; gap:8px; align-items:center;
-      font-weight:600; color:#0f172a; font-size:13px;
+      font-weight:700; color:#0f172a; font-size:13px;
     }
     .btn.primary{ background: linear-gradient(90deg,var(--accent), #5c7cff); color:white; border:none; box-shadow:var(--shadow-md);}
     .btn:active{ transform: translateY(1px); }
 
     .card{
       background: var(--card); border-radius: var(--radius);
-      padding: 16px; box-shadow: var(--shadow-sm);
-      border: 1px solid rgba(15,23,42,0.05);
+      padding: 18px; box-shadow: var(--shadow-sm);
+      border: 1px solid rgba(15,23,42,0.04);
     }
-    .card h3{ margin:0 0 10px 0; font-size:15px; font-weight:600; }
+    .card h3{ margin:0 0 8px 0; font-size:15px; font-weight:700; }
     .card p { margin:0; color:var(--muted); font-size:13px; }
 
-    .summary-row{ display:grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom:20px; }
+    /* layout */
+    .summary-row{ display:grid; grid-template-columns: repeat(3,1fr); gap: 18px; margin-bottom:18px; }
     @media (max-width:980px){ .summary-row{ grid-template-columns: 1fr 1fr; } }
     @media (max-width:640px){ .summary-row{ grid-template-columns: 1fr; } }
 
     .grid-2 { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
     @media (max-width:860px){ .grid-2{ grid-template-columns: 1fr; } }
 
-    .tabs{ display:flex; gap:8px; padding: 8px; background:#fff; border-radius: 999px; border:1px solid rgba(15,23,42,0.06); box-shadow:var(--shadow-sm);}
-    .tab{ padding:10px 16px; border-radius: 999px; cursor:pointer; color:var(--muted); font-weight:600; font-size:13px; display:inline-flex; gap:6px; align-items:center; }
+    /* Tabs */
+    .tabs{ display:flex; gap:10px; padding: 10px; background:#fff; border-radius: 999px; border:1px solid rgba(15,23,42,0.06); box-shadow:var(--shadow-sm);}
+    .tab{ padding:10px 14px; border-radius: 999px; cursor:pointer; color:var(--muted); font-weight:700; font-size:13px; display:inline-flex; gap:8px; align-items:center; }
     .tab.active{ background: linear-gradient(90deg,var(--accent), #6b8cff); color:white; box-shadow:var(--shadow-md);}
     .panel{ display:none; animation: fadeIn 280ms ease both; }
     .panel.active{ display:block; }
     @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to { opacity:1; transform:none;} }
 
-    table { width:100%; border-collapse: collapse; font-size:13px; margin-top:8px;}
-    thead th { text-align:left; font-size:12px; color:var(--muted); padding:8px; border-bottom:1px solid rgba(15,23,42,0.08); }
-    tbody td{ padding:8px; border-bottom:1px dashed rgba(15,23,42,0.05); }
-    tbody tr:hover{ background: rgba(51,102,255,0.04); }
-    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    /* Tables */
+    table { width:100%; border-collapse: collapse; font-size:13px; margin-top:10px;}
+    thead th { text-align:left; font-size:12px; color:var(--muted); padding:10px; border-bottom:1px solid rgba(15,23,42,0.06); }
+    tbody td{ padding:10px; border-bottom:1px dashed rgba(15,23,42,0.04); }
+    tbody tr:hover{ background: rgba(51,102,255,0.03); }
 
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:13px; }
+
+    /* Chart containers */
     .plotly-graph-div, .js-plotly-plot, .plotly { width:100%!important; max-width:100%!important; }
     #overview_chart, #runtime_chart, #memory_chart { min-height:420px; }
 
-    .badge{ display:inline-block; padding:5px 8px; border-radius:8px; background:#f2f4ff; color:var(--accent); font-weight:600; font-size:12px; margin-right:6px; }
+    .badge{ display:inline-block; padding:6px 10px; border-radius:10px; background:#f2f6ff; color:var(--accent); font-weight:700; font-size:12px; margin-right:8px; }
     .muted{ color:var(--muted); }
 
-    .code{ background:#f8faff; border:1px solid rgba(15,23,42,0.05); padding:12px; border-radius:10px; white-space:pre-wrap; font-size:13px; font-family:ui-monospace,monospace; color:#0f172a; }
-    footer.footer{ margin-top:22px; color:var(--muted); font-size:12px; text-align:center; }
+    .code{ background:#fafbff; border:1px solid rgba(15,23,42,0.04); padding:14px; border-radius:12px; white-space:pre-wrap; font-size:13px; font-family:ui-monospace,monospace; color:#0f172a; }
+
+    footer.footer{ margin-top:26px; color:var(--muted); font-size:13px; text-align:center; }
   </style>
 </head>
 <body>
@@ -110,10 +117,7 @@
         {% if html_path %}
           <a class="btn" href="file://{{ html_path }}"><span class="material-icons">launch</span> Open</a>
         {% endif %}
-        <button class="btn" id="downloadHtmlBtn"><span class="material-icons">download</span> Download HTML</button>
-        <button class="btn" id="downloadCsvRuntime"><span class="material-icons">table_chart</span> Export Runtime CSV</button>
-        <button class="btn" id="downloadCsvMemory"><span class="material-icons">table_chart</span> Export Memory CSV</button>
-        <button class="btn primary" id="toggleYBtn" data-state="log">Y: log</button>
+        <button class="btn primary" id="downloadBtn"><span class="material-icons">download</span> Download</button>
       </div>
     </header>
 
@@ -124,19 +128,41 @@
     <section class="summary-row">
       <div class="card" data-aos="fade-right">
         <h3>Beginner Summary</h3>
-        {% for label, s in beginner_summaries.items() %}
-          <div style="margin-top:8px;"><span class="badge">{{ label }}</span><p class="muted">{{ s }}</p></div>
-        {% endfor %}
+        <div style="margin-top:8px;">
+          {% for label, s in beginner_summaries.items() %}
+            <div style="margin:10px 0;">
+              <span class="badge">{{ label }}</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">{{ s }}</p></div>
+            </div>
+          {% endfor %}
+        </div>
       </div>
       <div class="card" data-aos="fade-up">
         <h3>Interview Summary</h3>
-        {% for label, s in interview_summaries.items() %}
-          <div style="margin-top:8px;"><span class="badge">{{ label }}</span><p class="muted">{{ s }}</p></div>
-        {% endfor %}
+        <div style="margin-top:8px;">
+          {% for label, s in interview_summaries.items() %}
+            <div style="margin:10px 0;">
+              <span class="badge">{{ label }}</span>
+              <div style="display:inline-block; vertical-align:middle; max-width:78%"><p class="muted" style="margin:0;">{{ s }}</p></div>
+            </div>
+          {% endfor %}
+        </div>
       </div>
       <div class="card" data-aos="fade-left">
         <h3>Quick Stats</h3>
-        <p class="muted">{{ ns|length }} input sizes • {{ runtime_table|length }} measured points</p>
+        <p class="muted" style="margin-top:8px;">{{ ns|length }} input sizes • {{ runtime_table|length }} measured points</p>
+        {% if func_stats %}
+          <div style="margin-top:8px;">
+            {% for label, fs in func_stats.items() %}
+              <div style="margin-top:6px;">
+                <strong style="font-size:13px;">{{ label }}</strong>
+                {% if fs.errors %}
+                  <div style="margin-top:6px; color:#a04444; font-size:12px;">⚠️ {{ fs.errors | join('; ') }}</div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
       </div>
     </section>
 
@@ -147,60 +173,72 @@
         <div class="tab" data-tab="runtime"><span class="material-icons">speed</span> Runtime</div>
         <div class="tab" data-tab="memory"><span class="material-icons">storage</span> Memory</div>
         <div class="tab" data-tab="comparison"><span class="material-icons">compare_arrows</span> Comparison</div>
+        <div class="tab" data-tab="grid"><span class="material-icons">grid_on</span> Grid Sweeps</div>
         <div class="tab" data-tab="methods"><span class="material-icons">menu_book</span> Methods</div>
       </div>
       <div class="muted" style="font-size:12px;">Generated by <strong>algoscope</strong></div>
     </nav>
 
-    <main style="margin-top:16px;">
+    <main style="margin-top:18px;">
+      <!-- Overview -->
       <section id="overview" class="panel active" data-aos="fade-up">
         <div class="grid-2">
           <div class="card">
             <h3>Manual Big-O Analysis</h3>
-            {% for label, md_html in manual_complexities_concise.items() %}
+            {% for label, comps in manual_complexities_concise.items() %}
               <div style="margin-top:12px;">
                 <span class="badge">{{ label }}</span>
-                <div class="muted" style="margin-top:6px;">{{ md_html | safe }}</div>
+                <div class="muted" style="margin-top:8px;">{{ comps | safe }}</div>
               </div>
             {% endfor %}
           </div>
           <div class="card">
             <h3>Performance Overview</h3>
-            <p class="muted">Combined runtime, memory, and rank summary</p>
-            <div id="overview_chart">{{ overview_div | safe }}</div>
+            <p class="muted" style="margin-top:6px;">Combined runtime, memory, and rank summary</p>
+            <div id="overview_chart" style="margin-top:12px;">{{ overview_div | safe }}</div>
           </div>
         </div>
       </section>
 
+      <!-- Complexity -->
       <section id="complexity" class="panel">
         <div class="card">
           <h3>Complexity Analysis</h3>
           {% for label, comps in manual_complexities_full.items() %}
-            <div style="margin-top:12px;">
+            <div style="margin-top:14px;">
               <span class="badge">{{ label }}</span>
-              <div style="margin-top:6px;">
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Heuristic Guess</h4>
+              <div style="margin-top:8px;">
+                <h4 style="margin:6px 0; font-size:13px; color:#333;">Heuristic Guess</h4>
                 <div class="muted">{{ comps.heuristic | safe }}</div>
-                <h4 style="margin:6px 0; font-size:13px; color:#444;">Dynamic Guess (empirical)</h4>
-                <div class="muted">{{ comps.dynamic | safe }}</div>
+
+                <h4 style="margin:10px 0 6px 0; font-size:13px; color:#333;">Dynamic / Empirical Hint</h4>
+                <div class="muted">
+                  {% if heatmap_divs and heatmap_divs.get(label) %}
+                    <div style="margin-bottom:8px;">(Grid sweep available)</div>
+                  {% endif %}
+                  {% if dynamic_guesses.get(label) %}
+                    {{ dynamic_guesses.get(label) }}
+                  {% else %}
+                    <span class="muted">No empirical hint available.</span>
+                  {% endif %}
+                </div>
               </div>
-            </div>
-            <div style="margin-top:8px;">
-              <strong>Empirical slope:</strong>
-              <div class="muted" style="font-size:13px;">{{ dynamic_guesses.get(label, "No dynamic hint") }}</div>
             </div>
           {% endfor %}
         </div>
       </section>
 
+      <!-- Runtime -->
       <section id="runtime" class="panel">
-        <div class="card"><h3>Runtime Chart</h3><div id="runtime_chart">{{ runtime_div|safe }}</div></div>
+        <div class="card"><h3>Runtime Chart</h3><div id="runtime_chart" style="margin-top:12px;">{{ runtime_div|safe }}</div></div>
       </section>
 
+      <!-- Memory -->
       <section id="memory" class="panel">
-        <div class="card"><h3>Memory Chart</h3><div id="memory_chart">{{ memory_div|safe }}</div></div>
+        <div class="card"><h3>Memory Chart</h3><div id="memory_chart" style="margin-top:12px;">{{ memory_div|safe }}</div></div>
       </section>
 
+      <!-- Comparison -->
       <section id="comparison" class="panel">
         <div class="card"><h3>Comparison Summary</h3>
           <table>
@@ -212,7 +250,7 @@
                 <td>{{ row.best_runtime }}</td>
                 <td>{{ row.worst_runtime }}</td>
                 <td>{% for label, rankv in row.mean_ranks.items() %}
-                  <span class="badge">{{ label }}: {{ "%.2f"|format(rankv) }}</span>
+                  <span class="badge" style="background:#fff; border:1px solid rgba(13,18,36,0.06); color:#444;">{{ label }}: {{ "%.2f"|format(rankv) }}</span>
                 {% endfor %}</td>
               </tr>
             {% endfor %}
@@ -221,19 +259,39 @@
         </div>
       </section>
 
+      <!-- Grid Sweeps / Heatmaps -->
+      <section id="grid" class="panel">
+        <div class="card">
+          <h3>Grid Sweeps & Heatmaps</h3>
+          <p class="muted" style="margin-top:6px;">Heatmaps show runtime behavior across two varying parameters (e.g., items n vs capacity W).</p>
+          <div style="margin-top:12px;">
+            {% if heatmap_divs %}
+              {% for label, div_html in heatmap_divs.items() %}
+                <div style="margin-top:18px;">
+                  <h4 style="margin:6px 0;"><span class="badge">{{ label }}</span> Heatmap</h4>
+                  <div style="margin-top:8px;">{{ div_html | safe }}</div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p class="muted">No grid sweeps were executed for this report. Provide <code>grid_x</code>, <code>grid_y</code>, and <code>grid_input_builder</code> to enable heatmaps.</p>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+
+      <!-- Methods -->
       <section id="methods" class="panel">
-        <div class="card"><h3>Methods & Notes</h3><div class="code">{{ methods_text|safe }}</div></div>
+        <div class="card"><h3>Methods & Notes</h3><div class="code" style="margin-top:8px;">{{ methods_text|safe }}</div></div>
       </section>
     </main>
 
-    <footer class="footer"><p>Generated by <strong>algoscope</strong>.</p></footer>
+    <footer class="footer"><p>Generated by <strong>algoscope</strong> — built for clear, beginner-friendly algorithm analysis.</p></footer>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function(){
       if (window.AOS) { AOS.init({ once: true, duration: 500 }); }
-
       const tabs = document.querySelectorAll('.tab'); const panels = document.querySelectorAll('.panel');
       tabs.forEach(t => { t.addEventListener('click', () => {
         tabs.forEach(x => x.classList.remove('active')); t.classList.add('active');
@@ -241,79 +299,16 @@
         panels.forEach(p => { p.classList.toggle('active', p.id === name); });
         document.querySelector('main').scrollIntoView({behavior: 'smooth'});
       });});
-
-      const downloadHtmlBtn = document.getElementById('downloadHtmlBtn');
-      if (downloadHtmlBtn) {
-        downloadHtmlBtn.addEventListener('click', () => {
-          const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+      // Download button (save page)
+      const dl = document.getElementById('downloadBtn');
+      if (dl) {
+        dl.addEventListener('click', () => {
+          const title = document.title || 'algoscope-report';
+          const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
+          const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
-          a.href = URL.createObjectURL(blob);
-          a.download = (document.title || 'algoscope-report') + '.html';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        });
-      }
-
-      const runtimeJson = {{ runtime_table_json | safe }};
-      const memoryJson = {{ memory_table_json | safe }};
-
-      function toCSV(arr) {
-        if (!arr || !arr.length) return '';
-        const labels = Object.keys(arr[0]).filter(k => k !== 'n');
-        const header = ['n', ...labels];
-        const rows = arr.map(r => {
-          const n = r.n;
-          const cells = labels.map(l => {
-            const c = r[l];
-            if (c && typeof c === 'object' && 'mean' in c) {
-              return c.mean;
-            }
-            return c;
-          });
-          return [n, ...cells];
-        });
-        return [header.join(','), ...rows.map(r => r.join(','))].join('\n');
-      }
-
-      const dlRT = document.getElementById('downloadCsvRuntime');
-      if (dlRT) {
-        dlRT.addEventListener('click', () => {
-          const csv = toCSV(runtimeJson);
-          const b = new Blob([csv], {type: 'text/csv'});
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(b);
-          a.download = (document.title || 'runtime') + '-runtime.csv';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        });
-      }
-
-      const dlMem = document.getElementById('downloadCsvMemory');
-      if (dlMem) {
-        dlMem.addEventListener('click', () => {
-          const csv = toCSV(memoryJson);
-          const b = new Blob([csv], {type: 'text/csv'});
-          const a = document.createElement('a');
-          a.href = URL.createObjectURL(b);
-          a.download = (document.title || 'memory') + '-memory.csv';
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-        });
-      }
-
-      const toggleYBtn = document.getElementById('toggleYBtn');
-      if (toggleYBtn) {
-        toggleYBtn.addEventListener('click', () => {
-          const container = document.querySelector('#runtime_chart .js-plotly-plot');
-          if (!container || !window.Plotly) return;
-          const current = toggleYBtn.getAttribute('data-state') === 'log' ? 'log' : 'linear';
-          const next = current === 'log' ? 'linear' : 'log';
-          window.Plotly.relayout(container, {'yaxis.type': next});
-          toggleYBtn.textContent = 'Y: ' + (next === 'log' ? 'log' : 'linear');
-          toggleYBtn.setAttribute('data-state', next);
+          a.href = url; a.download = title.replace(/\s+/g,'_') + '.html'; document.body.appendChild(a); a.click();
+          setTimeout(()=>{ URL.revokeObjectURL(url); a.remove(); }, 1500);
         });
       }
     });
