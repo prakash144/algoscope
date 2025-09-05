@@ -114,4 +114,3 @@ if __name__ == "__main__":
         title="0/1 Knapsack Approaches",
         notes="Comparison of brute force, recursion, memoization, tabulation, and 1D DP.",
     )
-    print(f"Analysis complete. Report saved to {results.html_path}")

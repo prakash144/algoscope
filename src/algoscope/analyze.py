@@ -122,6 +122,7 @@ def analyze_functions(
     builds plots, writes the final HTML report, and returns a results object.
     If html_out is None, the report is not saved to a file.
     """
+    print("🔍 Analyzing algorithms... please wait, this may take some time ⏳")
     # Input validation
     if not callable(input_builder):
         raise TypeError("input_builder must be a callable that accepts n and returns args/kwargs.")
@@ -370,8 +371,16 @@ def analyze_functions(
         with open(html_out, "w", encoding="utf-8") as f:
             f.write(html)
 
-    return ResultObject(html=html, html_path=os.path.abspath(html_out) if html_out else None, title=title, ns=ns, func_stats=stats)
+    print(f"✅ Analysis complete. Report saved to: {os.path.abspath(html_out)}") if html_out else print(
+        "✅ Analysis complete. (No report file saved)")
 
+    return ResultObject(
+        html=html,
+        html_path=os.path.abspath(html_out) if html_out else None,
+        title=title,
+        ns=ns,
+        func_stats=stats,
+    )
 
 # Convenience wrapper for analyzing a single function
 def analyze_function(
