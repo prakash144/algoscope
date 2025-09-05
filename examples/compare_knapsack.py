@@ -81,10 +81,12 @@ def knapsack_1d(weights, values, W):
 
 # Input builder for benchmarking ------------------------------
 def build_input(n: int) -> Tuple[tuple, dict] | Any:
-    # Generate n items, weights 1..n, values random in [1, 100]
+    if n > 20 and any(f.__name__ == "knapsack_bruteforce" for f in functions_to_compare):
+        raise ValueError("Brute force not allowed for n > 20")
+    random.seed(n)  # stable per input size
     weights = [random.randint(1, n) for _ in range(n)]
     values = [random.randint(1, 100) for _ in range(n)]
-    W = n * 2  # capacity grows with n
+    W = n * 2
     return (weights, values, W), {}
 
 
