@@ -5,6 +5,8 @@
   <meta charset="utf-8"/>
   <title>Maximum Subarray: Brute Force vs Kadane's Algorithm - Algoscope Pro</title>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
   <!-- Premium Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
@@ -575,6 +577,16 @@
       grid-template-columns: 1fr 400px;
       gap: 24px;
     }
+
+    /* Full width for chart panels when right sidebar is not visible */
+    .chart-full-width {
+      grid-template-columns: 1fr;
+    }
+    
+    .chart-full-width .chart-container {
+      width: 100%;
+      max-width: none;
+    }
     
     @media (max-width: 1200px) {
       .container {
@@ -623,6 +635,73 @@
     .panel .panel-body {
       padding: 24px;
       background: transparent;
+      overflow: hidden; /* Remove horizontal scrolling */
+    }
+    
+    .panel .panel-body > div {
+      min-width: 800px; /* Ensure charts have minimum width */
+    }
+
+    /* Chart responsiveness and overflow fixes */
+    .panel .panel-body .js-plotly-plot {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: hidden !important;
+    }
+
+    .panel .panel-body .plotly {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+
+    /* Ensure chart containers are responsive */
+    .chart-container {
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    /* Chart legend and info improvements */
+    .js-plotly-plot .legend {
+      font-family: 'Inter', sans-serif !important;
+      font-size: 13px !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 8px !important;
+      padding: 8px !important;
+      backdrop-filter: blur(10px) !important;
+    }
+
+    .js-plotly-plot .legend .legendtext {
+      color: var(--text-primary) !important;
+      font-weight: 500 !important;
+    }
+
+    .js-plotly-plot .legend .traces {
+      margin: 4px 0 !important;
+    }
+
+    /* Improve chart hover and selection */
+    .js-plotly-plot .hovertext {
+      background: rgba(0, 0, 0, 0.8) !important;
+      color: white !important;
+      border: 1px solid rgba(255, 255, 255, 0.2) !important;
+      border-radius: 6px !important;
+      padding: 8px 12px !important;
+      font-size: 12px !important;
+      font-family: 'Inter', sans-serif !important;
+    }
+
+    /* Chart axis improvements */
+    .js-plotly-plot .xaxis, .js-plotly-plot .yaxis {
+      font-family: 'Inter', sans-serif !important;
+      color: var(--text-muted) !important;
+    }
+
+    .js-plotly-plot .xaxis-title, .js-plotly-plot .yaxis-title {
+      font-family: 'Inter', sans-serif !important;
+      font-weight: 600 !important;
+      color: var(--text-primary) !important;
     }
 
     /* Premium Badges */
@@ -640,6 +719,150 @@
       transition: all var(--transition-normal);
       text-transform: uppercase;
       letter-spacing: 0.05em;
+    }
+
+    /* Tab Navigation Styles */
+    .tab-container {
+      width: 100%;
+    }
+
+    .tab-nav {
+      display: flex;
+      border-bottom: 2px solid rgba(66, 133, 244, 0.1);
+      margin-bottom: 20px;
+      background: rgba(66, 133, 244, 0.02);
+      border-radius: 8px 8px 0 0;
+      padding: 4px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 12px 16px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tab-btn:hover {
+      background: rgba(66, 133, 244, 0.08);
+      color: var(--text-primary);
+      transform: translateY(-1px);
+    }
+
+    .tab-btn.active {
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+      border-radius: 6px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Enhanced Card Styles */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid rgba(66, 133, 244, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gradient-primary);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      border-color: rgba(66, 133, 244, 0.2);
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    /* Enhanced Panel Styles */
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid rgba(66, 133, 244, 0.1);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .panel:hover {
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+      border-color: rgba(66, 133, 244, 0.2);
+    }
+
+    .panel-head {
+      background: linear-gradient(135deg, rgba(66, 133, 244, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(66, 133, 244, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    /* Enhanced Table Styles */
+    table {
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    table tbody tr:hover {
+      background: rgba(66, 133, 244, 0.05);
+      transform: scale(1.01);
+      transition: all 0.2s ease;
     }
     
     .badge:hover {
@@ -723,9 +946,8 @@
         <div class="side-item" data-tab="runtime"><span class="material-icons-round">speed</span> Runtime Analysis</div>
         <div class="side-item" data-tab="memory"><span class="material-icons-round">memory</span> Memory Analysis</div>
         <div class="side-item" data-tab="complexity"><span class="material-icons-round">analytics</span> Complexity Analysis</div>
-        <div class="side-item" data-tab="interview"><span class="material-icons-round">school</span> Interview Prep</div>
         <div class="side-item" data-tab="comparison"><span class="material-icons-round">compare_arrows</span> Algorithm Comparison</div>
-        <div class="side-item" data-tab="methods"><span class="material-icons-round">menu_book</span> Technical Details</div>
+        <div class="side-item" data-tab="interview"><span class="material-icons-round">school</span> Interview Prep</div>
       </nav>
 
       <!-- Errors / warnings -->
@@ -788,7 +1010,7 @@
               
             
             
-              0.6137658305668082
+              0.5947382152326706
             
           </div>
           <div class="muted" style="margin-top:8px;">Median across functions' means</div>
@@ -801,9 +1023,9 @@
         </div>
       </div>
 
-      <div class="grid-2">
+      <div class="grid-2" style="gap: 24px;">
         <!-- Left: big charts -->
-        <div>
+        <div style="min-width: 0; flex: 1;">
           <div class="panel" id="overview_panel">
             <div class="panel-head">
               <div><strong>🚀 Algorithm Performance Overview</strong> <span class="muted" style="margin-left:8px;">Google SWE Interview Analysis</span></div>
@@ -813,7 +1035,34 @@
               </div>
             </div>
             <div class="panel-body" id="overview_chart">
-              <div>                            <div id="436cbb4e-c31d-4340-9455-0a3ebbd67adc" class="plotly-graph-div" style="height:500px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("436cbb4e-c31d-4340-9455-0a3ebbd67adc")) {                    Plotly.newPlot(                        "436cbb4e-c31d-4340-9455-0a3ebbd67adc",                        [{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eRuntime: %{y:.3f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4285f4","line":{"color":"white","width":2},"opacity":0.8},"name":"\u26a1 Runtime (normalized)","x":["max_subarray_brute_force","max_subarray_optimal"],"y":[0.00010512345165845272,0.0400971832652975],"type":"bar"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eMemory: %{y:.3f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#ea4335","line":{"color":"white","width":2},"opacity":0.8},"name":"\ud83d\udcbe Memory (normalized)","x":["max_subarray_brute_force","max_subarray_optimal"],"y":[0.05301923545166788,0.05242896425297892],"type":"bar"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eRanking: %{y:.3f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#34a853","line":{"color":"white","width":2},"opacity":0.8},"name":"\ud83c\udfc6 Ranking (1\u002fmean rank)","x":["max_subarray_brute_force","max_subarray_optimal"],"y":[0.5,1.0],"type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":20,"color":"#1e293b","family":"Inter, sans-serif"},"text":"\ud83d\udcca Performance Overview","x":0.5},"margin":{"l":60,"r":40,"t":80,"b":60},"font":{"family":"Inter, sans-serif","size":12,"color":"#374151"},"legend":{"font":{"size":12,"family":"Inter, sans-serif"},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"center","x":0.5,"bgcolor":"rgba(255,255,255,0.9)","bordercolor":"rgba(66, 133, 244, 0.2)","borderwidth":2},"transition":{"duration":500,"easing":"cubic-in-out"},"barmode":"group","height":500,"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","annotations":[{"bgcolor":"rgba(255,255,255,0.8)","bordercolor":"rgba(66, 133, 244, 0.2)","borderpad":4,"borderwidth":1,"font":{"color":"#64748b","size":11},"showarrow":false,"text":"\ud83d\udcc8 Lower values are better for runtime and memory","x":0.5,"xref":"paper","y":0.95,"yref":"paper"}],"xaxis":{"title":{"font":{"size":14,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1},"yaxis":{"title":{"text":"Normalized Performance","font":{"size":14,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":true,"zerolinecolor":"rgba(66, 133, 244, 0.2)","zerolinewidth":2}},                        {"responsive": true}                    )                };            </script>        </div>
+              <div>                            <div id="d4d0256c-9011-4d6f-958a-daa025df6c73" class="plotly-graph-div" style="height:500px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("d4d0256c-9011-4d6f-958a-daa025df6c73")) {                    Plotly.newPlot(                        "d4d0256c-9011-4d6f-958a-daa025df6c73",                        [{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eRuntime: %{y:.3f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4285f4","line":{"color":"white","width":2},"opacity":0.8},"name":"\u26a1 Runtime (normalized)","x":["max_subarray_brute_force","max_subarray_optimal"],"y":[0.00010119782555720803,0.03818424282257403],"type":"bar"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eMemory: %{y:.3f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#ea4335","line":{"color":"white","width":2},"opacity":0.8},"name":"\ud83d\udcbe Memory (normalized)","x":["max_subarray_brute_force","max_subarray_optimal"],"y":[0.05301923545166788,0.05242896425297892],"type":"bar"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eRanking: %{y:.3f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#34a853","line":{"color":"white","width":2},"opacity":0.8},"name":"\ud83c\udfc6 Ranking (1\u002fmean rank)","x":["max_subarray_brute_force","max_subarray_optimal"],"y":[0.5,1.0],"type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":20,"color":"#1e293b","family":"Inter, sans-serif"},"text":"\ud83d\udcca Performance Overview","x":0.5},"margin":{"l":60,"r":40,"t":80,"b":60},"font":{"family":"Inter, sans-serif","size":12,"color":"#374151"},"legend":{"font":{"size":12,"family":"Inter, sans-serif"},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"center","x":0.5,"bgcolor":"rgba(255,255,255,0.9)","bordercolor":"rgba(66, 133, 244, 0.2)","borderwidth":2},"transition":{"duration":500,"easing":"cubic-in-out"},"barmode":"group","height":500,"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","annotations":[{"bgcolor":"rgba(255,255,255,0.8)","bordercolor":"rgba(66, 133, 244, 0.2)","borderpad":4,"borderwidth":1,"font":{"color":"#64748b","size":11},"showarrow":false,"text":"\ud83d\udcc8 Lower values are better for runtime and memory","x":0.5,"xref":"paper","y":0.95,"yref":"paper"}],"xaxis":{"title":{"font":{"size":14,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1},"yaxis":{"title":{"text":"Normalized Performance","font":{"size":14,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":true,"zerolinecolor":"rgba(66, 133, 244, 0.2)","zerolinewidth":2}},                        {"responsive": true}                    )                };            </script>        </div>
+              
+              <!-- Performance Analysis Card -->
+              <div class="card" style="margin-top:20px; background:linear-gradient(135deg, rgba(66, 133, 244, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%); border-left:4px solid var(--accent-primary);">
+                <h4 style="color:var(--accent-primary); margin-bottom:12px;">📊 Performance Analysis</h4>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap:16px;">
+                  <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
+                    <strong style="color:var(--accent-success);">🏆 Best Performer:</strong>
+                    <div class="muted" style="margin-top:4px; font-size:13px;">
+                      
+                        max_subarray_optimal - Fastest algorithm across all input sizes
+                      
+                    </div>
+                  </div>
+                  <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
+                    <strong style="color:var(--accent-warning);">📈 Growth Pattern:</strong>
+                    <div class="muted" style="margin-top:4px; font-size:13px;">
+                      Compare the slope of curves to identify time complexity patterns (O(1), O(log n), O(n), O(n log n), O(n²))
+                    </div>
+                  </div>
+                  <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
+                    <strong style="color:var(--accent-danger);">⚠️ Performance Gap:</strong>
+                    <div class="muted" style="margin-top:4px; font-size:13px;">
+                      The vertical distance between curves shows the performance difference - larger gaps indicate more significant algorithmic improvements
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -825,7 +1074,40 @@
               </div>
             </div>
             <div class="panel-body" id="runtime_chart">
-              <div>                            <div id="e323d5a6-c953-44d3-b41f-c2de93465c99" class="plotly-graph-div" style="height:650px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("e323d5a6-c953-44d3-b41f-c2de93465c99")) {                    Plotly.newPlot(                        "e323d5a6-c953-44d3-b41f-c2de93465c99",                        [{"fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[0.0003594870081949002,0.001663276494548966,0.009123213756119162,0.05975607640447298,0.5697864628900626,3.447456906039319],"type":"scatter"},{"fill":"tonexty","fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"name":"max_subarray_brute_force 95% CI","opacity":0.2,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[0.0003024633916132198,0.0015285735058904785,0.00871748664400095,0.055646356396583434,0.3614204867101014,2.8494291775607925],"type":"scatter"},{"hovertemplate":"\u003cb\u003emax_subarray_brute_force\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eTime: %{y:.6f}s\u003cbr\u003eType: Brute Force\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#4285f4","dash":"dash","width":4},"marker":{"color":"#4285f4","line":{"color":"white","width":2},"size":10,"symbol":"diamond"},"mode":"lines+markers","name":"\ud83d\udd34 max_subarray_brute_force (Brute Force)","x":[50,100,200,400,800,1600],"y":[0.00033097519990406,0.0015959250002197222,0.008920350200060056,0.05770121640052821,0.465603474800082,3.1484430418000557],"type":"scatter"},{"fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[9.384537060603506e-06,1.5454877451206994e-05,3.092353885778238e-05,5.6910326135687564e-05,0.0001169375620184172,0.00021983330269653546],"type":"scatter"},{"fill":"tonexty","fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"name":"max_subarray_optimal 95% CI","opacity":0.2,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[7.831862222312011e-06,1.4711522941565636e-05,2.7076861309874686e-05,5.398927266768363e-05,0.00010601203797429947,0.0002095334976845681],"type":"scatter"},{"hovertemplate":"\u003cb\u003emax_subarray_optimal\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eTime: %{y:.6f}s\u003cbr\u003eType: Optimal\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#ea4335","dash":"solid","width":4},"marker":{"color":"#ea4335","line":{"color":"white","width":2},"size":10,"symbol":"star"},"mode":"lines+markers","name":"\ud83d\udfe2 max_subarray_optimal (Optimal)","x":[50,100,200,400,800,1600],"y":[8.608199641457759e-06,1.5083200196386315e-05,2.900020008382853e-05,5.54497994016856e-05,0.00011147479999635834,0.00021468340019055178],"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(1)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#64748b","dash":"dot","width":2},"mode":"lines","name":"O(1)","opacity":0.7,"x":[50,100,200,400,800,1600],"y":{"dtype":"f8","bdata":"M0MgdnMw+T8zQyB2czD5PzNDIHZzMPk\u002fM0MgdnMw+T8zQyB2czD5PzNDIHZzMPk\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(n)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#94a3b8","dash":"dot","width":2},"mode":"lines","name":"O(n)","opacity":0.7,"x":[50,100,200,400,800,1600],"y":{"dtype":"f8","bdata":"M0MgdnMwqT8zQyB2czC5PzNDIHZzMMk\u002fM0MgdnMw2T8zQyB2czDpPzNDIHZzMPk\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(n**2)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#cbd5e1","dash":"dot","width":2},"mode":"lines","name":"O(n**2)","opacity":0.7,"x":[50,100,200,400,800,1600],"y":{"dtype":"f8","bdata":"M0MgdnMwWT8zQyB2czB5PzNDIHZzMJk\u002fM0MgdnMwuT8zQyB2czDZPzNDIHZzMPk\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(n**3)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#e2e8f0","dash":"dot","width":2},"mode":"lines","name":"O(n**3)","opacity":0.7,"x":[50,100,200,400,800,1600],"y":{"dtype":"f8","bdata":"M0MgdnMwCT8zQyB2czA5PzNDIHZzMGk\u002fM0MgdnMwmT8zQyB2czDJPzNDIHZzMPk\u002f"},"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":24,"color":"#1e293b","family":"Inter, sans-serif"},"pad":{"t":20,"b":20},"text":"Maximum Subarray: Brute Force vs Kadane's Algorithm \u2014 Runtime Analysis","x":0.5},"legend":{"font":{"size":13,"family":"Inter, sans-serif"},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"left","x":0.01,"bgcolor":"rgba(255,255,255,0.9)","bordercolor":"rgba(66, 133, 244, 0.2)","borderwidth":2,"itemclick":"toggleothers","itemdoubleclick":"toggle"},"margin":{"l":80,"r":40,"t":100,"b":80},"font":{"family":"Inter, sans-serif","size":12,"color":"#374151"},"transition":{"duration":500,"easing":"cubic-in-out"},"xaxis":{"title":{"text":"Input Size (n)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"linear","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true},"yaxis":{"title":{"text":"Time (seconds)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"log","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true,"tickformat":".1e"},"hovermode":"x unified","plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":650,"annotations":[{"bgcolor":"rgba(255,255,255,0.8)","bordercolor":"rgba(66, 133, 244, 0.2)","borderpad":4,"borderwidth":1,"font":{"color":"#64748b","size":11},"showarrow":false,"text":"\ud83d\udca1 Hover over data points for detailed information","x":0.02,"xref":"paper","y":0.98,"yref":"paper"}]},                        {"responsive": true}                    )                };            </script>        </div>
+              <div>                            <div id="788d572e-b86e-4cdd-a2d2-233fe372ce2f" class="plotly-graph-div" style="height:750px; width:1200px;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("788d572e-b86e-4cdd-a2d2-233fe372ce2f")) {                    Plotly.newPlot(                        "788d572e-b86e-4cdd-a2d2-233fe372ce2f",                        [{"fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[0.00032408910047129866,0.00156628786275393,0.00912925510722421,0.0659435747008802,0.4049781796444552,3.179932213656749],"type":"scatter"},{"fill":"tonexty","fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"name":"max_subarray_brute_force 95% CI","opacity":0.2,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[0.000304626897556175,0.001525845735939251,0.0085746112940556,0.0516233584982428,0.38014658715307065,3.0328099531406485],"type":"scatter"},{"hovertemplate":"\u003cb\u003emax_subarray_brute_force\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eTime: %{y:.6f}s\u003cbr\u003eType: Brute Force\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#4285f4","dash":"dash","width":4},"marker":{"color":"#4285f4","line":{"color":"white","width":2},"size":10,"symbol":"diamond"},"mode":"lines+markers","name":"\ud83d\udd34 max_subarray_brute_force (Brute Force)","x":[50,100,200,400,800,1600],"y":[0.00031435799901373683,0.0015460667993465905,0.008851933200639905,0.058783466599561504,0.3925623833987629,3.106371083398699],"type":"scatter"},{"fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[1.0108484770195606e-05,2.073135196683167e-05,3.099603421468768e-05,7.240370891606526e-05,0.00011529679362926145,0.00024478335108077116],"type":"scatter"},{"fill":"tonexty","fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"name":"max_subarray_optimal 95% CI","opacity":0.2,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[7.691115257305976e-06,1.476864768205972e-05,2.8754366909204834e-05,4.924628897486165e-05,0.00010853640520448354,0.00022136704792566632],"type":"scatter"},{"hovertemplate":"\u003cb\u003emax_subarray_optimal\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eTime: %{y:.6f}s\u003cbr\u003eType: Optimal\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#ea4335","dash":"solid","width":4},"marker":{"color":"#ea4335","line":{"color":"white","width":2},"size":10,"symbol":"star"},"mode":"lines+markers","name":"\ud83d\udfe2 max_subarray_optimal (Optimal)","x":[50,100,200,400,800,1600],"y":[8.899800013750791e-06,1.7749999824445694e-05,2.9875200561946257e-05,6.082499894546345e-05,0.00011191659941687249,0.00023307519950321876],"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(1)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#64748b","dash":"dot","width":2},"mode":"lines","name":"O(1)","opacity":0.7,"x":[50,100,200,400,800,1600],"y":{"dtype":"f8","bdata":"AGD2R1Pa+D8AYPZHU9r4PwBg9kdT2vg\u002fAGD2R1Pa+D8AYPZHU9r4PwBg9kdT2vg\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(n)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#94a3b8","dash":"dot","width":2},"mode":"lines","name":"O(n)","opacity":0.7,"x":[50,100,200,400,800,1600],"y":{"dtype":"f8","bdata":"AGD2R1PaqD8AYPZHU9q4PwBg9kdT2sg\u002fAGD2R1Pa2D8AYPZHU9roPwBg9kdT2vg\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(n**2)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#cbd5e1","dash":"dot","width":2},"mode":"lines","name":"O(n**2)","opacity":0.7,"x":[50,100,200,400,800,1600],"y":{"dtype":"f8","bdata":"AGD2R1PaWD8AYPZHU9p4PwBg9kdT2pg\u002fAGD2R1PauD8AYPZHU9rYPwBg9kdT2vg\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(n**3)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#e2e8f0","dash":"dot","width":2},"mode":"lines","name":"O(n**3)","opacity":0.7,"x":[50,100,200,400,800,1600],"y":{"dtype":"f8","bdata":"AGD2R1PaCD8AYPZHU9o4PwBg9kdT2mg\u002fAGD2R1PamD8AYPZHU9rIPwBg9kdT2vg\u002f"},"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":28,"color":"#1e293b","family":"Inter, sans-serif"},"pad":{"t":30,"b":30},"text":"Maximum Subarray: Brute Force vs Kadane's Algorithm \u2014 Runtime Analysis","x":0.5},"legend":{"font":{"size":14,"family":"Inter, sans-serif"},"orientation":"h","yanchor":"bottom","y":1.05,"xanchor":"left","x":0.01,"bgcolor":"rgba(255,255,255,0.95)","bordercolor":"rgba(66, 133, 244, 0.3)","borderwidth":2,"itemclick":"toggleothers","itemdoubleclick":"toggle"},"margin":{"l":100,"r":60,"t":120,"b":100},"font":{"family":"Inter, sans-serif","size":13,"color":"#374151"},"transition":{"duration":500,"easing":"cubic-in-out"},"xaxis":{"title":{"text":"Input Size (n)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"linear","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true},"yaxis":{"title":{"text":"Time (seconds)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"log","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true,"tickformat":".1e"},"hovermode":"x unified","plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":750,"width":1200,"annotations":[{"bgcolor":"rgba(255,255,255,0.8)","bordercolor":"rgba(66, 133, 244, 0.2)","borderpad":4,"borderwidth":1,"font":{"color":"#64748b","size":11},"showarrow":false,"text":"\ud83d\udca1 Hover over data points for detailed information","x":0.02,"xref":"paper","y":0.98,"yref":"paper"}]},                        {"responsive": true}                    )                };            </script>        </div>
+              
+              <!-- Runtime Analysis Insights -->
+              <div class="card" style="margin-top:20px; background:linear-gradient(135deg, rgba(52, 168, 83, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%); border-left:4px solid var(--accent-success);">
+                <h4 style="color:var(--accent-success); margin-bottom:12px;">⚡ Runtime Insights</h4>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+                  <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
+                    <strong style="color:var(--accent-primary);">🔍 Complexity Detection:</strong>
+                    <div class="muted" style="margin-top:4px; font-size:13px;">
+                      • <strong>Flat line:</strong> O(1) - Constant time<br>
+                      • <strong>Gradual increase:</strong> O(log n) - Logarithmic<br>
+                      • <strong>Linear growth:</strong> O(n) - Linear time<br>
+                      • <strong>Steep curve:</strong> O(n²) or higher
+                    </div>
+                  </div>
+                  <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
+                    <strong style="color:var(--accent-warning);">📊 Performance Metrics:</strong>
+                    <div class="muted" style="margin-top:4px; font-size:13px;">
+                      • <strong>Y-axis (log scale):</strong> Shows exponential differences clearly<br>
+                      • <strong>X-axis:</strong> Input size progression<br>
+                      • <strong>Curve separation:</strong> Indicates algorithmic efficiency gap
+                    </div>
+                  </div>
+                  <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
+                    <strong style="color:var(--accent-danger);">🎯 Interview Tips:</strong>
+                    <div class="muted" style="margin-top:4px; font-size:13px;">
+                      • Explain the time complexity you observe<br>
+                      • Compare algorithms at different input sizes<br>
+                      • Discuss when each algorithm becomes optimal<br>
+                      • Mention space-time trade-offs
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -837,61 +1119,47 @@
               </div>
             </div>
             <div class="panel-body" id="memory_chart">
-              <div>                            <div id="bb824f0f-7461-48f6-b343-9fc34594795f" class="plotly-graph-div" style="height:650px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("bb824f0f-7461-48f6-b343-9fc34594795f")) {                    Plotly.newPlot(                        "bb824f0f-7461-48f6-b343-9fc34594795f",                        [{"fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[725.1967296821306,1124.8968639210455,1929.9456,3548.0,6752.0832,13157.9456],"type":"scatter"},{"fill":"tonexty","fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"name":"max_subarray_brute_force 95% CI","opacity":0.2,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[668.4032703178693,1089.5031360789546,1898.8544000000002,3548.0,6734.3168,13126.8544],"type":"scatter"},{"hovertemplate":"\u003cb\u003emax_subarray_brute_force\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eMemory: %{y:.0f} bytes\u003cbr\u003eType: Brute Force\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#4285f4","dash":"dash","width":4},"marker":{"color":"#4285f4","line":{"color":"white","width":2},"size":10,"symbol":"diamond"},"mode":"lines+markers","name":"\ud83d\udd34 max_subarray_brute_force (Brute Force)","x":[50,100,200,400,800,1600],"y":[696.8,1107.2,1914.4,3548.0,6743.2,13142.4],"type":"scatter"},{"fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[701.9456,1092.0,1892.0,3492.0,6692.0,13092.0],"type":"scatter"},{"fill":"tonexty","fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"name":"max_subarray_optimal 95% CI","opacity":0.2,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[670.8543999999999,1092.0,1892.0,3492.0,6692.0,13092.0],"type":"scatter"},{"hovertemplate":"\u003cb\u003emax_subarray_optimal\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eMemory: %{y:.0f} bytes\u003cbr\u003eType: Optimal\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#ea4335","dash":"solid","width":4},"marker":{"color":"#ea4335","line":{"color":"white","width":2},"size":10,"symbol":"star"},"mode":"lines+markers","name":"\ud83d\udfe2 max_subarray_optimal (Optimal)","x":[50,100,200,400,800,1600],"y":[686.4,1092.0,1892.0,3492.0,6692.0,13092.0],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":24,"color":"#1e293b","family":"Inter, sans-serif"},"pad":{"t":20,"b":20},"text":"Maximum Subarray: Brute Force vs Kadane's Algorithm \u2014 Memory Analysis","x":0.5},"legend":{"font":{"size":13,"family":"Inter, sans-serif"},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"left","x":0.01,"bgcolor":"rgba(255,255,255,0.9)","bordercolor":"rgba(66, 133, 244, 0.2)","borderwidth":2,"itemclick":"toggleothers","itemdoubleclick":"toggle"},"margin":{"l":80,"r":40,"t":100,"b":80},"font":{"family":"Inter, sans-serif","size":12,"color":"#374151"},"transition":{"duration":500,"easing":"cubic-in-out"},"xaxis":{"title":{"text":"Input Size (n)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"linear","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true},"yaxis":{"title":{"text":"Peak Memory (bytes)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"linear","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true,"tickformat":".2s"},"hovermode":"x unified","plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":650,"annotations":[{"bgcolor":"rgba(255,255,255,0.8)","bordercolor":"rgba(66, 133, 244, 0.2)","borderpad":4,"borderwidth":1,"font":{"color":"#64748b","size":11},"showarrow":false,"text":"\ud83d\udcbe Memory usage patterns help identify space complexity","x":0.02,"xref":"paper","y":0.98,"yref":"paper"}]},                        {"responsive": true}                    )                };            </script>        </div>
+              <div>                            <div id="d6f0085d-e8e9-4a22-b2e0-cea584ce2508" class="plotly-graph-div" style="height:750px; width:1200px;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("d6f0085d-e8e9-4a22-b2e0-cea584ce2508")) {                    Plotly.newPlot(                        "d6f0085d-e8e9-4a22-b2e0-cea584ce2508",                        [{"fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[725.1967296821306,1124.8968639210455,1929.9456,3548.0,6752.0832,13157.9456],"type":"scatter"},{"fill":"tonexty","fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"name":"max_subarray_brute_force 95% CI","opacity":0.2,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[668.4032703178693,1089.5031360789546,1898.8544000000002,3548.0,6734.3168,13126.8544],"type":"scatter"},{"hovertemplate":"\u003cb\u003emax_subarray_brute_force\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eMemory: %{y:.0f} bytes\u003cbr\u003eType: Brute Force\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#4285f4","dash":"dash","width":4},"marker":{"color":"#4285f4","line":{"color":"white","width":2},"size":10,"symbol":"diamond"},"mode":"lines+markers","name":"\ud83d\udd34 max_subarray_brute_force (Brute Force)","x":[50,100,200,400,800,1600],"y":[696.8,1107.2,1914.4,3548.0,6743.2,13142.4],"type":"scatter"},{"fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[701.9456,1092.0,1892.0,3492.0,6692.0,13092.0],"type":"scatter"},{"fill":"tonexty","fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"name":"max_subarray_optimal 95% CI","opacity":0.2,"showlegend":false,"x":[50,100,200,400,800,1600],"y":[670.8543999999999,1092.0,1892.0,3492.0,6692.0,13092.0],"type":"scatter"},{"hovertemplate":"\u003cb\u003emax_subarray_optimal\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eMemory: %{y:.0f} bytes\u003cbr\u003eType: Optimal\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#ea4335","dash":"solid","width":4},"marker":{"color":"#ea4335","line":{"color":"white","width":2},"size":10,"symbol":"star"},"mode":"lines+markers","name":"\ud83d\udfe2 max_subarray_optimal (Optimal)","x":[50,100,200,400,800,1600],"y":[686.4,1092.0,1892.0,3492.0,6692.0,13092.0],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":28,"color":"#1e293b","family":"Inter, sans-serif"},"pad":{"t":30,"b":30},"text":"Maximum Subarray: Brute Force vs Kadane's Algorithm \u2014 Memory Analysis","x":0.5},"legend":{"font":{"size":14,"family":"Inter, sans-serif"},"orientation":"h","yanchor":"bottom","y":1.05,"xanchor":"left","x":0.01,"bgcolor":"rgba(255,255,255,0.95)","bordercolor":"rgba(66, 133, 244, 0.3)","borderwidth":2,"itemclick":"toggleothers","itemdoubleclick":"toggle"},"margin":{"l":100,"r":60,"t":120,"b":100},"font":{"family":"Inter, sans-serif","size":13,"color":"#374151"},"transition":{"duration":500,"easing":"cubic-in-out"},"xaxis":{"title":{"text":"Input Size (n)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"linear","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true},"yaxis":{"title":{"text":"Peak Memory (bytes)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"linear","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true,"tickformat":".2s"},"hovermode":"x unified","plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":750,"width":1200,"annotations":[{"bgcolor":"rgba(255,255,255,0.8)","bordercolor":"rgba(66, 133, 244, 0.2)","borderpad":4,"borderwidth":1,"font":{"color":"#64748b","size":11},"showarrow":false,"text":"\ud83d\udcbe Memory usage patterns help identify space complexity","x":0.02,"xref":"paper","y":0.98,"yref":"paper"}]},                        {"responsive": true}                    )                };            </script>        </div>
+              
+              <!-- Memory Analysis Insights -->
+              <div class="card" style="margin-top:20px; background:linear-gradient(135deg, rgba(156, 39, 176, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%); border-left:4px solid var(--accent-purple);">
+                <h4 style="color:var(--accent-purple); margin-bottom:12px;">🧠 Memory Insights</h4>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;">
+                  <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
+                    <strong style="color:var(--accent-primary);">💾 Space Complexity Patterns:</strong>
+                    <div class="muted" style="margin-top:4px; font-size:13px;">
+                      • <strong>Constant:</strong> O(1) - Fixed memory usage<br>
+                      • <strong>Linear:</strong> O(n) - Memory grows with input<br>
+                      • <strong>Quadratic:</strong> O(n²) - Memory grows exponentially<br>
+                      • <strong>Logarithmic:</strong> O(log n) - Minimal growth
+                    </div>
+                  </div>
+                  <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
+                    <strong style="color:var(--accent-success);">📈 Memory Efficiency:</strong>
+                    <div class="muted" style="margin-top:4px; font-size:13px;">
+                      • <strong>Lower curves:</strong> More memory efficient<br>
+                      • <strong>Steep slopes:</strong> Memory usage grows quickly<br>
+                      • <strong>Flat lines:</strong> Constant space complexity<br>
+                      • <strong>Gap analysis:</strong> Compare memory trade-offs
+                    </div>
+                  </div>
+                  <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
+                    <strong style="color:var(--accent-warning);">🎯 Optimization Tips:</strong>
+                    <div class="muted" style="margin-top:4px; font-size:13px;">
+                      • Consider in-place algorithms for O(1) space<br>
+                      • Use iterative vs recursive approaches<br>
+                      • Evaluate auxiliary data structures<br>
+                      • Discuss memory vs time trade-offs
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Right: summaries & details -->
         <div>
-          <div class="card" style="margin-bottom:12px;">
-            <h4>🔍 Advanced Complexity Analysis</h4>
-            
-              <div style="margin-top:12px; padding:12px; background:rgba(66, 133, 244, 0.05); border-radius:8px; border-left:3px solid var(--accent-primary);">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                  <span class="badge" style="background:var(--gradient-primary); color:white;">max_subarray_brute_force</span>
-                  <span style="font-size:12px; color:var(--text-muted);">Algorithm Analysis</span>
-                </div>
-                <div style="margin-bottom:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(log n) &bull; <strong>Space</strong>: O(1)</p><p style='margin:4px 0; font-size:11px; color:#ef4444;'><strong>Confidence:</strong> Low - Limited pattern detection</p></div>
-                
-                  <div style="padding:8px; background:rgba(52, 168, 83, 0.1); border-radius:6px; font-size:12px; color:var(--accent-success); margin-top:6px;">
-                    <strong>📊 Empirical Analysis:</strong> Empirical slope ≈ 2.67 -> suggests super-polynomial / exponential-like.
-                  </div>
-                
-              </div>
-            
-              <div style="margin-top:12px; padding:12px; background:rgba(66, 133, 244, 0.05); border-radius:8px; border-left:3px solid var(--accent-primary);">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                  <span class="badge" style="background:var(--gradient-primary); color:white;">max_subarray_optimal</span>
-                  <span style="font-size:12px; color:var(--text-muted);">Algorithm Analysis</span>
-                </div>
-                <div style="margin-bottom:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(log n) &bull; <strong>Space</strong>: O(1)</p><p style='margin:4px 0; font-size:11px; color:#ef4444;'><strong>Confidence:</strong> Low - Limited pattern detection</p></div>
-                
-                  <div style="padding:8px; background:rgba(52, 168, 83, 0.1); border-radius:6px; font-size:12px; color:var(--accent-success); margin-top:6px;">
-                    <strong>📊 Empirical Analysis:</strong> Empirical slope ≈ 0.94 -> suggests O(n).
-                  </div>
-                
-              </div>
-            
-          </div>
-
-          <div class="card" style="margin-bottom:12px;">
-            <h4>Interview summary</h4>
-            
-              <div style="margin-top:10px;"><strong>max_subarray_brute_force</strong><div class="muted" style="margin-top:6px;">max_subarray_brute_force has time complexity O(log n) and space complexity O(1). Low confidence - manual review recommended.</div></div>
-            
-              <div style="margin-top:10px;"><strong>max_subarray_optimal</strong><div class="muted" style="margin-top:6px;">max_subarray_optimal has time complexity O(log n) and space complexity O(1). Low confidence - manual review recommended.</div></div>
-            
-          </div>
-
-          <div class="card" style="margin-bottom:12px;">
-            <h4>Beginner summaries</h4>
-            
-              <div style="margin-top:10px;"><span class="badge">max_subarray_brute_force</span> <div class="muted" style="margin-top:6px;">Empirical slope ≈ 2.67 — Runtime appears super-polynomial / exponential.</div></div>
-            
-              <div style="margin-top:10px;"><span class="badge">max_subarray_optimal</span> <div class="muted" style="margin-top:6px;">Empirical slope ≈ 0.94 — Runtime scales like O(n).</div></div>
-            
-          </div>
 
           <!-- Algorithm-specific Interview Tips -->
           
@@ -902,38 +1170,82 @@
           <!-- Detected Algorithm Patterns -->
           
 
-          <!-- General Google SWE Interview Tips -->
-          <div class="card" style="margin-bottom:12px;">
-            <h4>🎯 General Google SWE Interview Tips</h4>
-            <div style="margin-top:8px;">
-              <div style="padding:8px; background:rgba(251, 188, 4, 0.1); border-radius:6px; margin-bottom:8px;">
-                <strong>💡 Key Points to Mention:</strong>
-                <ul style="margin:4px 0; padding-left:16px; font-size:13px;">
-                  <li>Always start with brute force, then optimize</li>
-                  <li>Explain time/space complexity trade-offs</li>
-                  <li>Consider edge cases and constraints</li>
-                  <li>Use the right data structure for the problem</li>
-                </ul>
-              </div>
-              <div style="padding:8px; background:rgba(52, 168, 83, 0.1); border-radius:6px; margin-bottom:8px;">
-                <strong>🚀 Optimization Strategies:</strong>
-                <ul style="margin:4px 0; padding-left:16px; font-size:13px;">
-                  <li>Two pointers for sorted arrays</li>
-                  <li>Hash maps for O(1) lookups</li>
-                  <li>Sliding window for subarray problems</li>
-                  <li>Binary search for sorted data</li>
-                </ul>
+
+        </div>
+      </div>
+
+      <!-- Complexity Analysis Section -->
+      <div class="panel" id="complexity_panel" style="margin-top:12px; display:none;">
+        <div class="panel-head">
+          <strong>📊 Complexity Analysis</strong>
+          <span class="muted" style="margin-left:8px;">Advanced algorithm complexity insights</span>
+        </div>
+        <div class="panel-body">
+          <!-- Complexity Tabs -->
+          <div class="tab-container" style="margin-bottom:20px;">
+            <div class="tab-nav">
+              <button class="tab-btn active" data-tab="advanced-complexity">Advanced Analysis</button>
+              <button class="tab-btn" data-tab="beginner-summaries">Beginner Summaries</button>
+              <button class="tab-btn" data-tab="interview-summary">Interview Summary</button>
+            </div>
+            
+            <!-- Advanced Complexity Analysis Tab -->
+            <div class="tab-content active" id="advanced-complexity">
+              <div class="card" style="margin-bottom:12px;">
+                <h4>🔍 Advanced Complexity Analysis</h4>
+                
+                  <div style="margin-top:12px; padding:12px; background:rgba(66, 133, 244, 0.05); border-radius:8px; border-left:3px solid var(--accent-primary);">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                      <span class="badge" style="background:var(--gradient-primary); color:white;">max_subarray_brute_force</span>
+                      <span style="font-size:12px; color:var(--text-muted);">Algorithm Analysis</span>
+                    </div>
+                    <div style="margin-bottom:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(log n) &bull; <strong>Space</strong>: O(1)</p><p style='margin:4px 0; font-size:11px; color:#ef4444;'><strong>Confidence:</strong> Low - Limited pattern detection</p></div>
+                    
+                      <div style="padding:8px; background:rgba(52, 168, 83, 0.1); border-radius:6px; font-size:12px; color:var(--accent-success); margin-top:6px;">
+                        <strong>📊 Empirical Analysis:</strong> Empirical slope ≈ 2.66 -> suggests super-polynomial / exponential-like.
+                      </div>
+                    
+                  </div>
+                
+                  <div style="margin-top:12px; padding:12px; background:rgba(66, 133, 244, 0.05); border-radius:8px; border-left:3px solid var(--accent-primary);">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                      <span class="badge" style="background:var(--gradient-primary); color:white;">max_subarray_optimal</span>
+                      <span style="font-size:12px; color:var(--text-muted);">Algorithm Analysis</span>
+                    </div>
+                    <div style="margin-bottom:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(log n) &bull; <strong>Space</strong>: O(1)</p><p style='margin:4px 0; font-size:11px; color:#ef4444;'><strong>Confidence:</strong> Low - Limited pattern detection</p></div>
+                    
+                      <div style="padding:8px; background:rgba(52, 168, 83, 0.1); border-radius:6px; font-size:12px; color:var(--accent-success); margin-top:6px;">
+                        <strong>📊 Empirical Analysis:</strong> Empirical slope ≈ 0.93 -> suggests O(n).
+                      </div>
+                    
+                  </div>
+                
               </div>
             </div>
-          </div>
-
-          <div class="card">
-            <h4>Methods & notes</h4>
-            <div class="muted" style="margin-top:8px; white-space:pre-wrap;"><ul>
-<li><strong>Runtime</strong> measured with <code>time.perf_counter()</code>; each (function, n) pair ran 5 times after 2 warmup iterations. GC was enabled and collected before runs.</li>
-<li><strong>Memory</strong> peak measured with <code>tracemalloc</code> backend. When <code>rss</code> is selected and <code>psutil</code> is installed, a child process is monitored for RSS (recommended for realistic peak memory).</li>
-<li><strong>Confidence Intervals:</strong> T at 95% confidence.</li>
-</ul></div>
+            
+            <!-- Beginner Summaries Tab -->
+            <div class="tab-content" id="beginner-summaries">
+              <div class="card" style="margin-bottom:12px;">
+                <h4>📚 Beginner Summaries</h4>
+                
+                  <div style="margin-top:10px;"><span class="badge">max_subarray_brute_force</span> <div class="muted" style="margin-top:6px;">Empirical slope ≈ 2.66 — Runtime appears super-polynomial / exponential.</div></div>
+                
+                  <div style="margin-top:10px;"><span class="badge">max_subarray_optimal</span> <div class="muted" style="margin-top:6px;">Empirical slope ≈ 0.93 — Runtime scales like O(n).</div></div>
+                
+              </div>
+            </div>
+            
+            <!-- Interview Summary Tab -->
+            <div class="tab-content" id="interview-summary">
+              <div class="card" style="margin-bottom:12px;">
+                <h4>🎯 Interview Summary</h4>
+                
+                  <div style="margin-top:10px;"><strong>max_subarray_brute_force</strong><div class="muted" style="margin-top:6px;">max_subarray_brute_force has time complexity O(log n) and space complexity O(1). Low confidence - manual review recommended.</div></div>
+                
+                  <div style="margin-top:10px;"><strong>max_subarray_optimal</strong><div class="muted" style="margin-top:6px;">max_subarray_optimal has time complexity O(log n) and space complexity O(1). Low confidence - manual review recommended.</div></div>
+                
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -945,6 +1257,16 @@
           <span class="muted" style="margin-left:8px;">Master your algorithm analysis skills</span>
         </div>
         <div class="panel-body">
+          <!-- Interview Prep Tabs -->
+          <div class="tab-container" style="margin-bottom:20px;">
+            <div class="tab-nav">
+              <button class="tab-btn active" data-tab="interview-guide">Interview Guide</button>
+              <button class="tab-btn" data-tab="general-tips">General Tips</button>
+              <button class="tab-btn" data-tab="methods-notes">Methods & Notes</button>
+            </div>
+            
+            <!-- Interview Guide Tab -->
+            <div class="tab-content active" id="interview-guide">
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:20px;">
             <!-- Key Concepts -->
             <div class="card" style="padding:16px;">
@@ -1036,108 +1358,182 @@
               </div>
             </div>
           </div>
+            </div>
+            
+            <!-- General Tips Tab -->
+            <div class="tab-content" id="general-tips">
+              <div class="card" style="margin-bottom:12px;">
+                <h4>🎯 General Google SWE Interview Tips</h4>
+                <div style="margin-top:8px;">
+                  <div style="padding:8px; background:rgba(251, 188, 4, 0.1); border-radius:6px; margin-bottom:8px;">
+                    <strong>💡 Key Points to Mention:</strong>
+                    <ul style="margin:4px 0; padding-left:16px; font-size:13px;">
+                      <li>Always start with brute force, then optimize</li>
+                      <li>Explain time/space complexity trade-offs</li>
+                      <li>Consider edge cases and constraints</li>
+                      <li>Use the right data structure for the problem</li>
+                    </ul>
+                  </div>
+                  <div style="padding:8px; background:rgba(52, 168, 83, 0.1); border-radius:6px; margin-bottom:8px;">
+                    <strong>🚀 Optimization Strategies:</strong>
+                    <ul style="margin:4px 0; padding-left:16px; font-size:13px;">
+                      <li>Two pointers for sorted arrays</li>
+                      <li>Hash maps for O(1) lookups</li>
+                      <li>Sliding window for subarray problems</li>
+                      <li>Binary search for sorted data</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Methods & Notes Tab -->
+            <div class="tab-content" id="methods-notes">
+              <div class="card" style="margin-bottom:12px;">
+                <h4>Methods & notes</h4>
+                <div class="muted" style="margin-top:8px; white-space:pre-wrap;"><ul>
+<li><strong>Runtime</strong> measured with <code>time.perf_counter()</code>; each (function, n) pair ran 5 times after 2 warmup iterations. GC was enabled and collected before runs.</li>
+<li><strong>Memory</strong> peak measured with <code>tracemalloc</code> backend. When <code>rss</code> is selected and <code>psutil</code> is installed, a child process is monitored for RSS (recommended for realistic peak memory).</li>
+<li><strong>Confidence Intervals:</strong> T at 95% confidence.</li>
+</ul></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Comparison table -->
-      <div class="panel" id="comparison_panel" style="margin-top:12px;">
-        <div class="panel-head"><strong>Algorithm Comparison Summary</strong></div>
+      <!-- Algorithm Comparison Section -->
+      <div class="panel" id="comparison_panel" style="margin-top:12px; display:none;">
+        <div class="panel-head">
+          <strong>⚖️ Algorithm Comparison</strong>
+          <span class="muted" style="margin-left:8px;">Compare algorithm performance metrics</span>
+        </div>
         <div class="panel-body">
-          <table style="width:100%; border-collapse:collapse;">
-            <thead><tr style="color:var(--muted); font-size:13px;"><th style="text-align:left; padding:8px;">n</th><th style="text-align:left;padding:8px;">Best</th><th style="text-align:left;padding:8px;">Worst</th><th style="text-align:left;padding:8px;">Mean ranks</th></tr></thead>
-            <tbody>
+          <!-- Comparison Tabs -->
+          <div class="tab-container" style="margin-bottom:20px;">
+            <div class="tab-nav">
+              <button class="tab-btn active" data-tab="comparison-summary">Algorithm Comparison Summary</button>
+            </div>
             
-              <tr style="border-bottom:1px dashed rgba(255,255,255,0.03)">
-                <td class="mono" style="padding:8px;">50</td>
-                <td style="padding:8px;">max_subarray_optimal</td>
-                <td style="padding:8px;">max_subarray_brute_force</td>
-                <td style="padding:8px;">
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_brute_force: 2.00</span>
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_optimal: 1.00</span>
-                  
-                </td>
-              </tr>
-            
-              <tr style="border-bottom:1px dashed rgba(255,255,255,0.03)">
-                <td class="mono" style="padding:8px;">100</td>
-                <td style="padding:8px;">max_subarray_optimal</td>
-                <td style="padding:8px;">max_subarray_brute_force</td>
-                <td style="padding:8px;">
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_brute_force: 2.00</span>
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_optimal: 1.00</span>
-                  
-                </td>
-              </tr>
-            
-              <tr style="border-bottom:1px dashed rgba(255,255,255,0.03)">
-                <td class="mono" style="padding:8px;">200</td>
-                <td style="padding:8px;">max_subarray_optimal</td>
-                <td style="padding:8px;">max_subarray_brute_force</td>
-                <td style="padding:8px;">
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_brute_force: 2.00</span>
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_optimal: 1.00</span>
-                  
-                </td>
-              </tr>
-            
-              <tr style="border-bottom:1px dashed rgba(255,255,255,0.03)">
-                <td class="mono" style="padding:8px;">400</td>
-                <td style="padding:8px;">max_subarray_optimal</td>
-                <td style="padding:8px;">max_subarray_brute_force</td>
-                <td style="padding:8px;">
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_brute_force: 2.00</span>
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_optimal: 1.00</span>
-                  
-                </td>
-              </tr>
-            
-              <tr style="border-bottom:1px dashed rgba(255,255,255,0.03)">
-                <td class="mono" style="padding:8px;">800</td>
-                <td style="padding:8px;">max_subarray_optimal</td>
-                <td style="padding:8px;">max_subarray_brute_force</td>
-                <td style="padding:8px;">
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_brute_force: 2.00</span>
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_optimal: 1.00</span>
-                  
-                </td>
-              </tr>
-            
-              <tr style="border-bottom:1px dashed rgba(255,255,255,0.03)">
-                <td class="mono" style="padding:8px;">1600</td>
-                <td style="padding:8px;">max_subarray_optimal</td>
-                <td style="padding:8px;">max_subarray_brute_force</td>
-                <td style="padding:8px;">
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_brute_force: 2.00</span>
-                  
-                    <span class="badge" style="background:transparent; border:1px solid rgba(255,255,255,0.04); margin-bottom:6px; display:inline-block;">max_subarray_optimal: 1.00</span>
-                  
-                </td>
-              </tr>
-            
-            </tbody>
-          </table>
+            <!-- Algorithm Comparison Summary Tab -->
+            <div class="tab-content active" id="comparison-summary">
+              <div class="card" style="margin-bottom:12px;">
+                <h4>📊 Algorithm Comparison Summary</h4>
+                <div style="overflow-x:auto; margin-top:12px;">
+                  <table style="width:100%; border-collapse:collapse; min-width:600px;">
+                    <thead>
+                      <tr style="color:var(--muted); font-size:13px; background:rgba(66, 133, 244, 0.05);">
+                        <th style="text-align:left; padding:12px; border-bottom:2px solid var(--accent-primary);">Input Size (n)</th>
+                        <th style="text-align:left;padding:12px; border-bottom:2px solid var(--accent-primary);">Best Runtime</th>
+                        <th style="text-align:left;padding:12px; border-bottom:2px solid var(--accent-primary);">Worst Runtime</th>
+                        <th style="text-align:left;padding:12px; border-bottom:2px solid var(--accent-primary);">Mean Ranks</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">50</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">max_subarray_optimal</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">max_subarray_brute_force</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_brute_force: 2.00</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_optimal: 1.00</span>
+                          
+                        </td>
+                      </tr>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">100</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">max_subarray_optimal</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">max_subarray_brute_force</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_brute_force: 2.00</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_optimal: 1.00</span>
+                          
+                        </td>
+                      </tr>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">200</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">max_subarray_optimal</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">max_subarray_brute_force</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_brute_force: 2.00</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_optimal: 1.00</span>
+                          
+                        </td>
+                      </tr>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">400</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">max_subarray_optimal</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">max_subarray_brute_force</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_brute_force: 2.00</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_optimal: 1.00</span>
+                          
+                        </td>
+                      </tr>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">800</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">max_subarray_optimal</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">max_subarray_brute_force</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_brute_force: 2.00</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_optimal: 1.00</span>
+                          
+                        </td>
+                      </tr>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">1600</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">max_subarray_optimal</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">max_subarray_brute_force</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_brute_force: 2.00</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">max_subarray_optimal: 1.00</span>
+                          
+                        </td>
+                      </tr>
+                    
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <footer class="footer">
         <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
           <div>
-            Generated by <strong>Algoscope Pro</strong> - Premium Algorithm Analysis Tool for Google SWE Interviews
+            Generated by <strong>Algoscope Pro</strong> - Premium Algorithm Analysis Tool
           </div>
           <div style="display:flex; align-items:center; gap:12px; font-size:12px;">
             <span class="muted">🎯 Master algorithm complexity analysis</span>
             <span class="muted">📊 Export charts or CSV using the top-right actions</span>
+          </div>
+        </div>
+        <div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.1); text-align:center;">
+          <div style="font-size:12px; color:var(--text-muted);">
+            © 2024 <a href="https://www.prakashrabidas.in/" target="_blank" style="color:var(--accent-primary); text-decoration:none; font-weight:500;">Prakash Rabidas</a> - All Rights Reserved
+          </div>
+          <div style="margin-top:4px; font-size:11px; color:var(--text-muted); opacity:0.8;">
+            Senior Software Engineer at Thales | Experienced in Python, Java, C++, AWS
           </div>
         </div>
       </footer>
@@ -1159,6 +1555,12 @@
           document.getElementById('memory_panel').style.display='block';
           document.getElementById('interview_panel').style.display='none';
           document.getElementById('comparison_panel').style.display='none';
+          document.getElementById('complexity_panel').style.display='none';
+          // Apply full width for chart panels
+          const gridContainer = document.querySelector('.grid-2');
+          if (gridContainer) {
+            gridContainer.classList.add('chart-full-width');
+          }
         }
         if (tab === 'runtime') { 
           document.getElementById('runtime_panel').style.display='block';
@@ -1166,6 +1568,12 @@
           document.getElementById('memory_panel').style.display='none';
           document.getElementById('interview_panel').style.display='none';
           document.getElementById('comparison_panel').style.display='none';
+          document.getElementById('complexity_panel').style.display='none';
+          // Apply full width for chart panels
+          const gridContainer = document.querySelector('.grid-2');
+          if (gridContainer) {
+            gridContainer.classList.add('chart-full-width');
+          }
         }
         if (tab === 'memory') { 
           document.getElementById('memory_panel').style.display='block';
@@ -1173,14 +1581,25 @@
           document.getElementById('runtime_panel').style.display='none';
           document.getElementById('interview_panel').style.display='none';
           document.getElementById('comparison_panel').style.display='none';
+          document.getElementById('complexity_panel').style.display='none';
+          // Apply full width for chart panels
+          const gridContainer = document.querySelector('.grid-2');
+          if (gridContainer) {
+            gridContainer.classList.add('chart-full-width');
+          }
         }
         if (tab === 'complexity') { 
+          document.getElementById('complexity_panel').style.display='block';
           document.getElementById('overview_panel').style.display='none';
           document.getElementById('runtime_panel').style.display='none';
           document.getElementById('memory_panel').style.display='none';
           document.getElementById('interview_panel').style.display='none';
           document.getElementById('comparison_panel').style.display='none';
-          alert('Complexity analysis is shown in the right-side cards. Scroll to see the Advanced Complexity Analysis section.'); 
+          // Remove full width class for full-width panels
+          const gridContainer = document.querySelector('.grid-2');
+          if (gridContainer) {
+            gridContainer.classList.remove('chart-full-width');
+          }
         }
         if (tab === 'interview') {
           document.getElementById('interview_panel').style.display='block';
@@ -1188,6 +1607,12 @@
           document.getElementById('runtime_panel').style.display='none';
           document.getElementById('memory_panel').style.display='none';
           document.getElementById('comparison_panel').style.display='none';
+          document.getElementById('complexity_panel').style.display='none';
+          // Remove full width class for full-width panels
+          const gridContainer = document.querySelector('.grid-2');
+          if (gridContainer) {
+            gridContainer.classList.remove('chart-full-width');
+          }
         }
         if (tab === 'comparison') { 
           document.getElementById('comparison_panel').style.display='block';
@@ -1195,14 +1620,12 @@
           document.getElementById('runtime_panel').style.display='none';
           document.getElementById('memory_panel').style.display='none';
           document.getElementById('interview_panel').style.display='none';
-        }
-        if (tab === 'methods') { 
-          document.getElementById('overview_panel').style.display='none';
-          document.getElementById('runtime_panel').style.display='none';
-          document.getElementById('memory_panel').style.display='none';
-          document.getElementById('interview_panel').style.display='none';
-          document.getElementById('comparison_panel').style.display='none';
-          alert('Technical details are shown in the right-side cards. Scroll to see the Methods & notes section.'); 
+          document.getElementById('complexity_panel').style.display='none';
+          // Remove full width class for full-width panels
+          const gridContainer = document.querySelector('.grid-2');
+          if (gridContainer) {
+            gridContainer.classList.remove('chart-full-width');
+          }
         }
         window.scrollTo({top:0, behavior:'smooth'});
       });
@@ -1212,6 +1635,30 @@
     document.getElementById('overview_panel').style.display = 'block';
     document.getElementById('runtime_panel').style.display = 'block';
     document.getElementById('memory_panel').style.display = 'block';
+    // Apply full width for chart panels by default
+    const gridContainer = document.querySelector('.grid-2');
+    if (gridContainer) {
+      gridContainer.classList.add('chart-full-width');
+    }
+
+    // Internal tab navigation for complexity and comparison panels
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tabId = btn.getAttribute('data-tab');
+        const container = btn.closest('.tab-container');
+        
+        // Remove active class from all tabs in this container
+        container.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        container.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked tab and corresponding content
+        btn.classList.add('active');
+        const content = container.querySelector(`#${tabId}`);
+        if (content) {
+          content.classList.add('active');
+        }
+      });
+    });
 
     // Premium Theme toggle (light/dark)
     const toggleTheme = document.getElementById('toggleTheme');
@@ -1278,7 +1725,7 @@
 
     document.getElementById('downloadBtn').addEventListener('click', () => {
       // prefer runtime table CSV
-      const rt = JSON.parse('[{"n": 50, "max_subarray_brute_force": {"mean": 0.00033097519990406, "lower": 0.0003024633916132198, "upper": 0.0003594870081949002}, "max_subarray_optimal": {"mean": 8.608199641457759e-06, "lower": 7.831862222312011e-06, "upper": 9.384537060603506e-06}}, {"n": 100, "max_subarray_brute_force": {"mean": 0.0015959250002197222, "lower": 0.0015285735058904785, "upper": 0.001663276494548966}, "max_subarray_optimal": {"mean": 1.5083200196386315e-05, "lower": 1.4711522941565636e-05, "upper": 1.5454877451206994e-05}}, {"n": 200, "max_subarray_brute_force": {"mean": 0.008920350200060056, "lower": 0.00871748664400095, "upper": 0.009123213756119162}, "max_subarray_optimal": {"mean": 2.900020008382853e-05, "lower": 2.7076861309874686e-05, "upper": 3.092353885778238e-05}}, {"n": 400, "max_subarray_brute_force": {"mean": 0.05770121640052821, "lower": 0.055646356396583434, "upper": 0.05975607640447298}, "max_subarray_optimal": {"mean": 5.54497994016856e-05, "lower": 5.398927266768363e-05, "upper": 5.6910326135687564e-05}}, {"n": 800, "max_subarray_brute_force": {"mean": 0.465603474800082, "lower": 0.3614204867101014, "upper": 0.5697864628900626}, "max_subarray_optimal": {"mean": 0.00011147479999635834, "lower": 0.00010601203797429947, "upper": 0.0001169375620184172}}, {"n": 1600, "max_subarray_brute_force": {"mean": 3.1484430418000557, "lower": 2.8494291775607925, "upper": 3.447456906039319}, "max_subarray_optimal": {"mean": 0.00021468340019055178, "lower": 0.0002095334976845681, "upper": 0.00021983330269653546}}]');
+      const rt = JSON.parse('[{"n": 50, "max_subarray_brute_force": {"mean": 0.00031435799901373683, "lower": 0.000304626897556175, "upper": 0.00032408910047129866}, "max_subarray_optimal": {"mean": 8.899800013750791e-06, "lower": 7.691115257305976e-06, "upper": 1.0108484770195606e-05}}, {"n": 100, "max_subarray_brute_force": {"mean": 0.0015460667993465905, "lower": 0.001525845735939251, "upper": 0.00156628786275393}, "max_subarray_optimal": {"mean": 1.7749999824445694e-05, "lower": 1.476864768205972e-05, "upper": 2.073135196683167e-05}}, {"n": 200, "max_subarray_brute_force": {"mean": 0.008851933200639905, "lower": 0.0085746112940556, "upper": 0.00912925510722421}, "max_subarray_optimal": {"mean": 2.9875200561946257e-05, "lower": 2.8754366909204834e-05, "upper": 3.099603421468768e-05}}, {"n": 400, "max_subarray_brute_force": {"mean": 0.058783466599561504, "lower": 0.0516233584982428, "upper": 0.0659435747008802}, "max_subarray_optimal": {"mean": 6.082499894546345e-05, "lower": 4.924628897486165e-05, "upper": 7.240370891606526e-05}}, {"n": 800, "max_subarray_brute_force": {"mean": 0.3925623833987629, "lower": 0.38014658715307065, "upper": 0.4049781796444552}, "max_subarray_optimal": {"mean": 0.00011191659941687249, "lower": 0.00010853640520448354, "upper": 0.00011529679362926145}}, {"n": 1600, "max_subarray_brute_force": {"mean": 3.106371083398699, "lower": 3.0328099531406485, "upper": 3.179932213656749}, "max_subarray_optimal": {"mean": 0.00023307519950321876, "lower": 0.00022136704792566632, "upper": 0.00024478335108077116}}]');
       const csv = jsonToCsv(rt);
       const blob = new Blob([csv], {type: 'text/csv'});
       const url = URL.createObjectURL(blob);
