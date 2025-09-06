@@ -55,7 +55,7 @@ if __name__ == "__main__":
         ci_method="t",
         reference_curves=("1", "n", "nlogn", "n**2"),
         normalize_ref_at="max",
-        html_out="report.html",
+        html_out="examples/reports/report.html",
         title="Brute Force Sort vs. Merge Sort",
         notes="Comparison on random integer arrays.",
     )

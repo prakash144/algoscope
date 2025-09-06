@@ -11,7 +11,7 @@ from algoscope.io import export_results_json
 # Prefer local 'src' during development
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SRC_PATH = os.path.join(REPO_ROOT, "src")
-if SRC_PATH not in sys.path:
+if SRC_PATH not in sys.path: 
     sys.path.insert(0, SRC_PATH)
 
 # Import the library (should resolve to local src/algoscope)
@@ -75,14 +75,14 @@ if __name__ == "__main__":
         mem_backend="rss" if _PSUTIL_PRESENT else "tracemalloc",
         reference_curves=("1", "logn", "n", "nlogn", "n**2"),
         normalize_ref_at="max",
-        html_out="report.html",
+        html_out="examples/reports/report.html",
         title="Linear vs Binary Search",
         notes="Comparison on integer arrays with random targets.",
         timeout=10.0,
         run_in_subprocess=True,
     )
 
-    export_results_json(results, "json_result/results.json")
+    export_results_json(results, "examples/json_result/results.json")
     
 # - Need UI Suggestions :
 # - 'Complexity Analysis' tabs : Move inside below card i think logically its correct

@@ -135,7 +135,7 @@ def main():
         mem_backend="tracemalloc",
         reference_curves=("1", "n", "n**2", "nlogn"),
         normalize_ref_at="max",
-        html_out="sorting_comparison.html",
+        html_out="examples/reports/sorting_comparison.html",
         title="Sorting Algorithms: O(n²) vs O(n log n)",
         notes="Compare the performance of different sorting algorithms. Notice how O(n²) algorithms (Bubble, Insertion) scale poorly compared to O(n log n) algorithms (Merge, Quick).",
         timeout=60.0,

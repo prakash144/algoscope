@@ -1,0 +1,22 @@
+# Development dependencies for algoscope
+# Install with: pip install -r requirements-dev.txt
+
+# Include all production dependencies
+-r requirements.txt
+
+# Testing framework
+pytest>=7.0.0
+
+# Code formatting and linting
+ruff>=0.1.0
+
+# Type checking (optional)
+mypy>=1.0.0
+
+# Documentation generation (if needed)
+# sphinx>=5.0.0
+# sphinx-rtd-theme>=1.0.0
+
+# Build tools
+setuptools>=68.0.0
+wheel>=0.40.0

@@ -15,15 +15,54 @@
 
 ## Installation (editable)
 
+### Option 1: Using requirements.txt (Recommended)
+```bash
+pip install -U pip
+pip install -r requirements.txt
+pip install -e .
+```
+
+### Option 2: Manual installation
 ```bash
 pip install -U pip
 pip install plotly jinja2 numpy memory-profiler psutil
 pip install -e .
 ```
 
+### Option 3: Minimal installation (less accurate memory measurements)
+```bash
+pip install -U pip
+pip install -r requirements-minimal.txt
+pip install -e .
+```
+
+## Requirements Files
+
+The project includes several requirements files for different use cases:
+
+- **`requirements.txt`** - Complete dependencies with accurate memory profiling
+- **`requirements-minimal.txt`** - Core dependencies only (less accurate memory measurements)
+- **`requirements-dev.txt`** - Development dependencies including testing and linting tools
+
+## Project Structure
+
+```
+algoscope/
+├── src/algoscope/          # Main package source code
+├── examples/               # Example scripts and generated reports
+│   ├── reports/           # Generated HTML reports
+│   └── json_result/       # Generated JSON data files
+├── tests/                 # Test files
+├── requirements.txt       # Production dependencies
+├── requirements-dev.txt   # Development dependencies
+└── requirements-minimal.txt # Minimal dependencies
+```
+
 ## Usage
 
 See `examples/compare_linear_vs_binary.py` for a full example comparing linear vs. binary search.
+
+**Note:** All generated HTML reports are automatically saved to the `examples/reports/` folder for better organization.
 
 ### Quickstart
 
@@ -38,7 +77,7 @@ Install dependencies:
 
 ```bash
 pip install -U pip
-pip install plotly jinja2 numpy memory-profiler psutil
+pip install -r requirements.txt
 ```
 
 Install algoscope in editable mode:

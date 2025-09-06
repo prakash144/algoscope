@@ -551,6 +551,8 @@ def analyze_functions(
     )
 
     if html_out:
+        # Create directory if it doesn't exist
+        os.makedirs(os.path.dirname(html_out), exist_ok=True)
         with open(html_out, "w", encoding="utf-8") as f:
             f.write(html)
 

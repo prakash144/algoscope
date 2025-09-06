@@ -1,9 +1,9 @@
-{# src/algoscope/templates/report.html.j2 (Premium Google SWE Interview Tool) #}
+
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <title>{{ title }} - Algoscope Pro</title>
+  <title>Linear vs Binary Search - Algoscope Pro</title>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
@@ -946,9 +946,9 @@
           <h4 style="font-size:14px; margin-bottom:8px;">Quick Stats</h4>
           <div style="margin-top:6px;">
             <div class="muted" style="font-size:11px;">Input sizes</div>
-            <div class="metric" style="font-size:16px;">{{ ns|length }} sizes</div>
+            <div class="metric" style="font-size:16px;">6 sizes</div>
             <div class="muted" style="margin-top:4px; font-size:11px;">Measured points</div>
-            <div class="metric" style="font-size:16px;">{{ runtime_table|length }} points</div>
+            <div class="metric" style="font-size:16px;">6 points</div>
           </div>
         </div>
       </div>
@@ -967,23 +967,15 @@
       <div style="margin-top:12px;">
         <div class="card">
           <h4 style="margin-bottom:8px;">Diagnostics</h4>
-          {% set any_errors = false %}
-          {% for lbl, stat in func_stats.items() %}
-            {% if stat.errors %}
-              {% set any_errors = true %}
-            {% endif %}
-          {% endfor %}
-          {% if any_errors %}
-            <div class="errors">
-              {% for lbl, stat in func_stats.items() %}
-                {% for e in stat.errors %}
-                  <div><strong>{{ lbl }}:</strong> {{ e }}</div>
-                {% endfor %}
-              {% endfor %}
-            </div>
-          {% else %}
+          
+          
+            
+          
+            
+          
+          
             <div class="muted">No diagnostics or warnings detected.</div>
-          {% endif %}
+          
         </div>
       </div>
 
@@ -997,14 +989,14 @@
       <header class="topbar">
         <div class="top-left">
           <div class="title-block">
-            <h2>{{ title }}</h2>
-            <p class="muted">{{ notes or "" }}</p>
+            <h2>Linear vs Binary Search</h2>
+            <p class="muted">Comparison on integer arrays with random targets.</p>
           </div>
         </div>
         <div class="actions">
-          {% if html_path %}
-            <a class="btn" href="file://{{ html_path }}" title="Open file"><span class="material-icons-round">launch</span></a>
-          {% endif %}
+          
+            <a class="btn" href="file:///Users/prakash/Documents/github-repos/Real-Project/algoscope/examples/reports/report.html" title="Open file"><span class="material-icons-round">launch</span></a>
+          
           <button class="btn" id="toggleTheme" title="Toggle theme"><span class="material-icons-round">dark_mode</span></button>
           <button class="btn primary" id="downloadBtn"><span class="material-icons-round">download</span> Download</button>
         </div>
@@ -1015,9 +1007,9 @@
         <div class="card">
           <h4 style="font-size:14px; margin-bottom:8px;">Best runtime</h4>
           <div class="metric" style="font-size:18px;">
-            {% if comparison_rows|length > 0 %}
-              {{ comparison_rows[0].best_runtime }}
-            {% else %} — {% endif %}
+            
+              binary_search
+            
           </div>
           <div class="muted" style="margin-top:6px; font-size:11px;">Based on mean runtime across sizes</div>
         </div>
@@ -1025,26 +1017,22 @@
         <div class="card">
           <h4 style="font-size:14px; margin-bottom:8px;">Mean runtime</h4>
           <div class="metric" style="font-size:18px;">
-            {% set m = (runtime_table|map(attribute= (runtime_table[0]|list)[0] ) ) %}
-            {% set any_label = runtime_table[0].keys()|list|reject('equalto','n')|first %}
-            {% if any_label %}
-              {% set mean_vals = runtime_table|map(attribute=any_label)|map(attribute='mean')|list %}
-            {% else %}
-              {% set mean_vals = [] %}
-            {% endif %}
-            {% if mean_vals|length %}
-              {{ mean_vals|map('float')|sum/mean_vals|length |round(6) }}
-            {% else %}
-              —
-            {% endif %}
+            
+            
+            
+              
+            
+            
+              0.12226866477271181
+            
           </div>
           <div class="muted" style="margin-top:6px; font-size:11px;">Median across functions' means</div>
         </div>
 
         <div class="card">
           <h4 style="font-size:14px; margin-bottom:8px;">Input sizes</h4>
-          <div class="metric" style="font-size:16px;">{{ ns | length }} sizes</div>
-          <div class="muted" style="margin-top:6px; font-size:11px;">Range: {{ ns | min }} → {{ ns | max }}</div>
+          <div class="metric" style="font-size:16px;">6 sizes</div>
+          <div class="muted" style="margin-top:6px; font-size:11px;">Range: 1000 → 32000</div>
         </div>
       </div>
 
@@ -1060,7 +1048,7 @@
               </div>
             </div>
             <div class="panel-body" id="overview_chart">
-              {{ overview_div | safe }}
+              <div>                            <div id="d81ab86f-ce6c-4531-8bb6-ff95944aedf5" class="plotly-graph-div" style="height:500px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("d81ab86f-ce6c-4531-8bb6-ff95944aedf5")) {                    Plotly.newPlot(                        "d81ab86f-ce6c-4531-8bb6-ff95944aedf5",                        [{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eRuntime: %{y:.3f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#4285f4","line":{"color":"white","width":2},"opacity":0.8},"name":"\u26a1 Runtime (normalized)","x":["linear_search","binary_search"],"y":[0.7909099008651531,0.5580728981000539],"type":"bar"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eMemory: %{y:.3f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#ea4335","line":{"color":"white","width":2},"opacity":0.8},"name":"\ud83d\udcbe Memory (normalized)","x":["linear_search","binary_search"],"y":[0.9574021748437366,0.9665515753129046],"type":"bar"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003eRanking: %{y:.3f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#34a853","line":{"color":"white","width":2},"opacity":0.8},"name":"\ud83c\udfc6 Ranking (1\u002fmean rank)","x":["linear_search","binary_search"],"y":[0.6666666666666666,0.6666666666666666],"type":"bar"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":20,"color":"#1e293b","family":"Inter, sans-serif"},"text":"\ud83d\udcca Performance Overview","x":0.5},"margin":{"l":60,"r":40,"t":80,"b":60},"font":{"family":"Inter, sans-serif","size":12,"color":"#374151"},"legend":{"font":{"size":12,"family":"Inter, sans-serif"},"orientation":"h","yanchor":"bottom","y":1.02,"xanchor":"center","x":0.5,"bgcolor":"rgba(255,255,255,0.9)","bordercolor":"rgba(66, 133, 244, 0.2)","borderwidth":2},"transition":{"duration":500,"easing":"cubic-in-out"},"barmode":"group","height":500,"plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","annotations":[{"bgcolor":"rgba(255,255,255,0.8)","bordercolor":"rgba(66, 133, 244, 0.2)","borderpad":4,"borderwidth":1,"font":{"color":"#64748b","size":11},"showarrow":false,"text":"\ud83d\udcc8 Lower values are better for runtime and memory","x":0.5,"xref":"paper","y":0.95,"yref":"paper"}],"xaxis":{"title":{"font":{"size":14,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1},"yaxis":{"title":{"text":"Normalized Performance","font":{"size":14,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":true,"zerolinecolor":"rgba(66, 133, 244, 0.2)","zerolinewidth":2}},                        {"responsive": true}                    )                };            </script>        </div>
               
               <!-- Performance Analysis Card -->
               <div class="card" style="margin-top:20px; background:linear-gradient(135deg, rgba(66, 133, 244, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%); border-left:4px solid var(--accent-primary);">
@@ -1069,11 +1057,9 @@
                   <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
                     <strong style="color:var(--accent-success);">🏆 Best Performer:</strong>
                     <div class="muted" style="margin-top:4px; font-size:13px;">
-                      {% if comparison_rows|length > 0 %}
-                        {{ comparison_rows[0].best_runtime }} - Fastest algorithm across all input sizes
-                      {% else %}
-                        Analysis in progress...
-                      {% endif %}
+                      
+                        binary_search - Fastest algorithm across all input sizes
+                      
                     </div>
                   </div>
                   <div style="padding:12px; background:rgba(255,255,255,0.1); border-radius:8px;">
@@ -1101,7 +1087,7 @@
               </div>
             </div>
             <div class="panel-body" id="runtime_chart">
-              {{ runtime_div | safe }}
+              <div>                            <div id="cb2ce015-ba43-430d-bd6b-478033efd0f3" class="plotly-graph-div" style="height:750px; width:1200px;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("cb2ce015-ba43-430d-bd6b-478033efd0f3")) {                    Plotly.newPlot(                        "cb2ce015-ba43-430d-bd6b-478033efd0f3",                        [{"fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[1000,2000,4000,8000,16000,32000],"y":[0.14934976922766258,0.12252936509223034,0.15206141486356659,0.1264260786772024,0.1586634277676371,0.11963326589314208],"type":"scatter"},{"fill":"tonexty","fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"name":"linear_search 95% CI","opacity":0.2,"showlegend":false,"x":[1000,2000,4000,8000,16000,32000],"y":[0.1050826778629554,0.11485985436162433,0.11322338059007306,0.11561719423175981,0.09959444332455952,0.09018310538012847],"type":"scatter"},{"hovertemplate":"\u003cb\u003elinear_search\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eTime: %{y:.6f}s\u003cbr\u003eType: Standard\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#4285f4","dash":"solid","width":3},"marker":{"color":"#4285f4","line":{"color":"white","width":2},"size":8},"mode":"lines+markers","name":"linear_search","x":[1000,2000,4000,8000,16000,32000],"y":[0.12721622354530898,0.11869460972692733,0.13264239772681982,0.12102163645448111,0.1291289355460983,0.10490818563663527],"type":"scatter"},{"fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[1000,2000,4000,8000,16000,32000],"y":[0.14007855627357388,0.14067354144698246,0.22487150657912194,0.1266872034021255,0.12368668253238452,0.09465760512992856],"type":"scatter"},{"fill":"tonexty","fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"name":"binary_search 95% CI","opacity":0.2,"showlegend":false,"x":[1000,2000,4000,8000,16000,32000],"y":[0.11269342118136332,0.11488621637187701,0.10809126633171048,0.11729335768792039,0.11591446110474782,0.09115989450784982],"type":"scatter"},{"hovertemplate":"\u003cb\u003ebinary_search\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eTime: %{y:.6f}s\u003cbr\u003eType: Optimal\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#ea4335","dash":"solid","width":4},"marker":{"color":"#ea4335","line":{"color":"white","width":2},"size":10,"symbol":"star"},"mode":"lines+markers","name":"\ud83d\udfe2 binary_search (Optimal)","x":[1000,2000,4000,8000,16000,32000],"y":[0.1263859887274686,0.12777987890942974,0.1664813864554162,0.12199028054502295,0.11980057181856617,0.09290874981888919],"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(1)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#64748b","dash":"dot","width":2},"mode":"lines","name":"O(1)","opacity":0.7,"x":[1000,2000,4000,8000,16000,32000],"y":{"dtype":"f8","bdata":"jC4wuhBSuT+MLjC6EFK5P4wuMLoQUrk\u002fjC4wuhBSuT+MLjC6EFK5P4wuMLoQUrk\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(logn)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#94a3b8","dash":"dot","width":2},"mode":"lines","name":"O(logn)","opacity":0.7,"x":[1000,2000,4000,8000,16000,32000],"y":{"dtype":"f8","bdata":"3Pa83m\u002fcsD\u002fMzqAKkI2yP7ymhDawPrQ\u002frH5oYtDvtT+cVkyO8KC3P4wuMLoQUrk\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(n)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#cbd5e1","dash":"dot","width":2},"mode":"lines","name":"O(n)","opacity":0.7,"x":[1000,2000,4000,8000,16000,32000],"y":{"dtype":"f8","bdata":"jC4wuhBSaT+MLjC6EFJ5P4wuMLoQUok\u002fjC4wuhBSmT+MLjC6EFKpP4wuMLoQUrk\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(nlogn)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#e2e8f0","dash":"dot","width":2},"mode":"lines","name":"O(nlogn)","opacity":0.7,"x":[1000,2000,4000,8000,16000,32000],"y":{"dtype":"f8","bdata":"3Pa83m\u002fcYD\u002fMzqAKkI1yP7ymhDawPoQ\u002frH5oYtDvlT+cVkyO8KCnP4wuMLoQUrk\u002f"},"type":"scatter"},{"hovertemplate":"\u003cb\u003eO(n**2)\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eReference: %{y:.6f}\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#64748b","dash":"dot","width":2},"mode":"lines","name":"O(n**2)","opacity":0.7,"x":[1000,2000,4000,8000,16000,32000],"y":{"dtype":"f8","bdata":"jC4wuhBSGT+MLjC6EFI5P4wuMLoQUlk\u002fjC4wuhBSeT+MLjC6EFKZP4wuMLoQUrk\u002f"},"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":28,"color":"#1e293b","family":"Inter, sans-serif"},"pad":{"t":30,"b":30},"text":"Linear vs Binary Search \u2014 Runtime Analysis","x":0.5},"legend":{"font":{"size":14,"family":"Inter, sans-serif"},"orientation":"h","yanchor":"bottom","y":1.05,"xanchor":"left","x":0.01,"bgcolor":"rgba(255,255,255,0.95)","bordercolor":"rgba(66, 133, 244, 0.3)","borderwidth":2,"itemclick":"toggleothers","itemdoubleclick":"toggle"},"margin":{"l":100,"r":60,"t":120,"b":100},"font":{"family":"Inter, sans-serif","size":13,"color":"#374151"},"transition":{"duration":500,"easing":"cubic-in-out"},"xaxis":{"title":{"text":"Input Size (n)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"linear","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true},"yaxis":{"title":{"text":"Time (seconds)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"log","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true,"tickformat":".1e"},"hovermode":"x unified","plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":750,"width":1200,"annotations":[{"bgcolor":"rgba(255,255,255,0.8)","bordercolor":"rgba(66, 133, 244, 0.2)","borderpad":4,"borderwidth":1,"font":{"color":"#64748b","size":11},"showarrow":false,"text":"\ud83d\udca1 Hover over data points for detailed information","x":0.02,"xref":"paper","y":0.98,"yref":"paper"}]},                        {"responsive": true}                    )                };            </script>        </div>
               
               <!-- Runtime Analysis Insights -->
               <div class="card" style="margin-top:20px; background:linear-gradient(135deg, rgba(52, 168, 83, 0.05) 0%, rgba(16, 185, 129, 0.05) 100%); border-left:4px solid var(--accent-success);">
@@ -1146,7 +1132,7 @@
               </div>
             </div>
             <div class="panel-body" id="memory_chart">
-              {{ memory_div | safe }}
+              <div>                            <div id="e73d2f92-0235-444c-bae2-f5c315aec8c6" class="plotly-graph-div" style="height:750px; width:1200px;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("e73d2f92-0235-444c-bae2-f5c315aec8c6")) {                    Plotly.newPlot(                        "e73d2f92-0235-444c-bae2-f5c315aec8c6",                        [{"fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[1000,2000,4000,8000,16000,32000],"y":[33515518.954358973,33696310.06536295,33792294.30870269,33858982.618147336,34116976.081602834,35087821.67719902],"type":"scatter"},{"fill":"tonexty","fillcolor":"#4285f4","hoverinfo":"skip","line":{"width":0},"name":"linear_search 95% CI","opacity":0.2,"showlegend":false,"x":[1000,2000,4000,8000,16000,32000],"y":[33101825.045641027,33397659.389182497,33584671.50947912,33610329.381852664,33682994.82748807,34493536.868255526],"type":"scatter"},{"hovertemplate":"\u003cb\u003elinear_search\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eMemory: %{y:.0f} bytes\u003cbr\u003eType: Standard\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#4285f4","dash":"solid","width":3},"marker":{"color":"#4285f4","line":{"color":"white","width":2},"size":8},"mode":"lines+markers","name":"linear_search","x":[1000,2000,4000,8000,16000,32000],"y":[33308672.0,33546984.727272727,33688482.90909091,33734656.0,33899985.45454545,34790679.27272727],"type":"scatter"},{"fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"opacity":0.1,"showlegend":false,"x":[1000,2000,4000,8000,16000,32000],"y":[33699334.53828742,33745786.965934455,34218010.35411744,33859374.200995825,34063345.01169585,34705958.0064513],"type":"scatter"},{"fill":"tonexty","fillcolor":"#ea4335","hoverinfo":"skip","line":{"width":0},"name":"binary_search 95% CI","opacity":0.2,"showlegend":false,"x":[1000,2000,4000,8000,16000,32000],"y":[33224837.098076206,33410739.579520088,32494658.73679165,33458013.43536782,33754499.35194051,34315365.62991234],"type":"scatter"},{"hovertemplate":"\u003cb\u003ebinary_search\u003c\u002fb\u003e\u003cbr\u003eInput size: %{x}\u003cbr\u003eMemory: %{y:.0f} bytes\u003cbr\u003eType: Optimal\u003cbr\u003e\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#ea4335","dash":"solid","width":4},"marker":{"color":"#ea4335","line":{"color":"white","width":2},"size":10,"symbol":"star"},"mode":"lines+markers","name":"\ud83d\udfe2 binary_search (Optimal)","x":[1000,2000,4000,8000,16000,32000],"y":[33462085.818181816,33578263.27272727,33356334.545454547,33658693.81818182,33908922.18181818,34510661.81818182],"type":"scatter"}],                        {"template":{"data":{"barpolar":[{"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"white","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"#C8D4E3","linecolor":"#C8D4E3","minorgridcolor":"#C8D4E3","startlinecolor":"#2a3f5f"},"type":"carpet"}],"choropleth":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"choropleth"}],"contourcarpet":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"contourcarpet"}],"contour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"contour"}],"heatmap":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"heatmap"}],"histogram2dcontour":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2dcontour"}],"histogram2d":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"histogram2d"}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"mesh3d":[{"colorbar":{"outlinewidth":0,"ticks":""},"type":"mesh3d"}],"parcoords":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"parcoords"}],"pie":[{"automargin":true,"type":"pie"}],"scatter3d":[{"line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatter3d"}],"scattercarpet":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattercarpet"}],"scattergeo":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergeo"}],"scattergl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattergl"}],"scattermapbox":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermapbox"}],"scattermap":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scattermap"}],"scatterpolargl":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolargl"}],"scatterpolar":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterpolar"}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"scatterternary":[{"marker":{"colorbar":{"outlinewidth":0,"ticks":""}},"type":"scatterternary"}],"surface":[{"colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"type":"surface"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}]},"layout":{"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"autotypenumbers":"strict","coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]],"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]},"colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"geo":{"bgcolor":"white","lakecolor":"white","landcolor":"white","showlakes":true,"showland":true,"subunitcolor":"#C8D4E3"},"hoverlabel":{"align":"left"},"hovermode":"closest","mapbox":{"style":"light"},"paper_bgcolor":"white","plot_bgcolor":"white","polar":{"angularaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""},"bgcolor":"white","radialaxis":{"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":""}},"scene":{"xaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"yaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"},"zaxis":{"backgroundcolor":"white","gridcolor":"#DFE8F3","gridwidth":2,"linecolor":"#EBF0F8","showbackground":true,"ticks":"","zerolinecolor":"#EBF0F8"}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"ternary":{"aaxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"baxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""},"bgcolor":"white","caxis":{"gridcolor":"#DFE8F3","linecolor":"#A2B1C6","ticks":""}},"title":{"x":0.05},"xaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2},"yaxis":{"automargin":true,"gridcolor":"#EBF0F8","linecolor":"#EBF0F8","ticks":"","title":{"standoff":15},"zerolinecolor":"#EBF0F8","zerolinewidth":2}}},"title":{"font":{"size":28,"color":"#1e293b","family":"Inter, sans-serif"},"pad":{"t":30,"b":30},"text":"Linear vs Binary Search \u2014 Memory Analysis","x":0.5},"legend":{"font":{"size":14,"family":"Inter, sans-serif"},"orientation":"h","yanchor":"bottom","y":1.05,"xanchor":"left","x":0.01,"bgcolor":"rgba(255,255,255,0.95)","bordercolor":"rgba(66, 133, 244, 0.3)","borderwidth":2,"itemclick":"toggleothers","itemdoubleclick":"toggle"},"margin":{"l":100,"r":60,"t":120,"b":100},"font":{"family":"Inter, sans-serif","size":13,"color":"#374151"},"transition":{"duration":500,"easing":"cubic-in-out"},"xaxis":{"title":{"text":"Input Size (n)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"linear","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true},"yaxis":{"title":{"text":"Peak Memory (bytes)","font":{"size":16,"color":"#1e293b","family":"Inter, sans-serif"}},"tickfont":{"size":12,"color":"#64748b","family":"Inter, sans-serif"},"minor":{"gridcolor":"rgba(66, 133, 244, 0.05)","gridwidth":0.5},"type":"linear","gridcolor":"rgba(66, 133, 244, 0.1)","linecolor":"rgba(66, 133, 244, 0.3)","showgrid":true,"gridwidth":1,"zeroline":false,"showline":true,"linewidth":2,"mirror":true,"tickformat":".2s"},"hovermode":"x unified","plot_bgcolor":"rgba(0,0,0,0)","paper_bgcolor":"rgba(0,0,0,0)","height":750,"width":1200,"annotations":[{"bgcolor":"rgba(255,255,255,0.8)","bordercolor":"rgba(66, 133, 244, 0.2)","borderpad":4,"borderwidth":1,"font":{"color":"#64748b","size":11},"showarrow":false,"text":"\ud83d\udcbe Memory usage patterns help identify space complexity","x":0.02,"xref":"paper","y":0.98,"yref":"paper"}]},                        {"responsive": true}                    )                };            </script>        </div>
               
               <!-- Memory Analysis Insights -->
               <div class="card" style="margin-top:20px; background:linear-gradient(135deg, rgba(156, 39, 176, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%); border-left:4px solid var(--accent-purple);">
@@ -1189,64 +1175,13 @@
         <div>
 
           <!-- Algorithm-specific Interview Tips -->
-          {% if interview_tips %}
-          <div class="card" style="margin-bottom:12px;">
-            <h4>🎯 Algorithm-Specific Interview Tips</h4>
-            {% for label, tips in interview_tips.items() %}
-              <div style="margin-top:12px; padding:12px; background:rgba(66, 133, 244, 0.05); border-radius:8px; border-left:3px solid var(--accent-primary);">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                  <span class="badge" style="background:var(--gradient-primary); color:white;">{{ label }}</span>
-                  <span style="font-size:12px; color:var(--text-muted);">Interview Tips</span>
-                </div>
-                <ul style="margin:0; padding-left:16px; font-size:13px; line-height:1.5;">
-                  {% for tip in tips %}
-                    <li style="margin-bottom:4px;">{{ tip }}</li>
-                  {% endfor %}
-                </ul>
-              </div>
-            {% endfor %}
-          </div>
-          {% endif %}
+          
 
           <!-- Optimization Suggestions -->
-          {% if optimization_suggestions %}
-          <div class="card" style="margin-bottom:12px;">
-            <h4>🚀 Optimization Suggestions</h4>
-            {% for label, suggestions in optimization_suggestions.items() %}
-              <div style="margin-top:12px; padding:12px; background:rgba(52, 168, 83, 0.05); border-radius:8px; border-left:3px solid var(--accent-success);">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                  <span class="badge" style="background:var(--gradient-success); color:white;">{{ label }}</span>
-                  <span style="font-size:12px; color:var(--text-muted);">Optimization Ideas</span>
-                </div>
-                <ul style="margin:0; padding-left:16px; font-size:13px; line-height:1.5;">
-                  {% for suggestion in suggestions %}
-                    <li style="margin-bottom:4px;">{{ suggestion }}</li>
-                  {% endfor %}
-                </ul>
-              </div>
-            {% endfor %}
-          </div>
-          {% endif %}
+          
 
           <!-- Detected Algorithm Patterns -->
-          {% if patterns_detected %}
-          <div class="card" style="margin-bottom:12px;">
-            <h4>🔍 Detected Algorithm Patterns</h4>
-            {% for label, patterns in patterns_detected.items() %}
-              <div style="margin-top:12px; padding:12px; background:rgba(156, 39, 176, 0.05); border-radius:8px; border-left:3px solid var(--accent-purple);">
-                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                  <span class="badge" style="background:var(--gradient-purple); color:white;">{{ label }}</span>
-                  <span style="font-size:12px; color:var(--text-muted);">Patterns Detected</span>
-                </div>
-                <div style="display:flex; flex-wrap:wrap; gap:6px;">
-                  {% for pattern in patterns %}
-                    <span class="badge" style="background:rgba(156, 39, 176, 0.2); color:var(--accent-purple); border:1px solid rgba(156, 39, 176, 0.3);">{{ pattern }}</span>
-                  {% endfor %}
-                </div>
-              </div>
-            {% endfor %}
-          </div>
-          {% endif %}
+          
 
 
         </div>
@@ -1271,20 +1206,33 @@
             <div class="tab-content active" id="advanced-complexity">
               <div class="card" style="margin-bottom:12px;">
                 <h4>🔍 Advanced Complexity Analysis</h4>
-                {% for label, md in manual_complexities_concise.items() %}
+                
                   <div style="margin-top:12px; padding:12px; background:rgba(66, 133, 244, 0.05); border-radius:8px; border-left:3px solid var(--accent-primary);">
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                      <span class="badge" style="background:var(--gradient-primary); color:white;">{{ label }}</span>
+                      <span class="badge" style="background:var(--gradient-primary); color:white;">linear_search</span>
                       <span style="font-size:12px; color:var(--text-muted);">Algorithm Analysis</span>
                     </div>
-                    <div style="margin-bottom:8px;">{{ md|safe }}</div>
-                    {% if dynamic_guesses and dynamic_guesses[label] %}
+                    <div style="margin-bottom:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(n) &bull; <strong>Space</strong>: O(1)</p><p style='margin:4px 0; font-size:11px; color:#ef4444;'><strong>Confidence:</strong> Low - Limited pattern detection</p></div>
+                    
                       <div style="padding:8px; background:rgba(52, 168, 83, 0.1); border-radius:6px; font-size:12px; color:var(--accent-success); margin-top:6px;">
-                        <strong>📊 Empirical Analysis:</strong> {{ dynamic_guesses[label] }}
+                        <strong>📊 Empirical Analysis:</strong> Empirical slope ≈ -0.03 -> suggests sub-logarithmic / decreasing.
                       </div>
-                    {% endif %}
+                    
                   </div>
-                {% endfor %}
+                
+                  <div style="margin-top:12px; padding:12px; background:rgba(66, 133, 244, 0.05); border-radius:8px; border-left:3px solid var(--accent-primary);">
+                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                      <span class="badge" style="background:var(--gradient-primary); color:white;">binary_search</span>
+                      <span style="font-size:12px; color:var(--text-muted);">Algorithm Analysis</span>
+                    </div>
+                    <div style="margin-bottom:8px;"><p style='margin:6px 0;'><strong>Time</strong>: O(log n) &bull; <strong>Space</strong>: O(1)</p><p style='margin:4px 0; font-size:12px;'><span class='badge' style='font-size:10px; padding:2px 6px;'>binary_search: Binary search reduces search space by half each iteration</span> &bull; <span class='badge' style='font-size:10px; padding:2px 6px;'>sorting: Sorting algorithm arranges elements in order</span></p><p style='margin:4px 0; font-size:11px; color:#f59e0b;'><strong>Confidence:</strong> Medium - Some patterns detected</p></div>
+                    
+                      <div style="padding:8px; background:rgba(52, 168, 83, 0.1); border-radius:6px; font-size:12px; color:var(--accent-success); margin-top:6px;">
+                        <strong>📊 Empirical Analysis:</strong> Empirical slope ≈ -0.08 -> suggests sub-logarithmic / decreasing.
+                      </div>
+                    
+                  </div>
+                
               </div>
             </div>
             
@@ -1292,9 +1240,11 @@
             <div class="tab-content" id="beginner-summaries">
               <div class="card" style="margin-bottom:12px;">
                 <h4>📚 Beginner Summaries</h4>
-                {% for label, text in beginner_summaries.items() %}
-                  <div style="margin-top:10px;"><span class="badge">{{ label }}</span> <div class="muted" style="margin-top:6px;">{{ text }}</div></div>
-                {% endfor %}
+                
+                  <div style="margin-top:10px;"><span class="badge">linear_search</span> <div class="muted" style="margin-top:6px;">Empirical slope ≈ -0.03 — Runtime appears sub-logarithmic / nearly constant.</div></div>
+                
+                  <div style="margin-top:10px;"><span class="badge">binary_search</span> <div class="muted" style="margin-top:6px;">Empirical slope ≈ -0.08 — Runtime appears sub-logarithmic / nearly constant.</div></div>
+                
               </div>
             </div>
             
@@ -1302,9 +1252,11 @@
             <div class="tab-content" id="interview-summary">
               <div class="card" style="margin-bottom:12px;">
                 <h4>🎯 Interview Summary</h4>
-                {% for label, text in interview_summaries.items() %}
-                  <div style="margin-top:10px;"><strong>{{ label }}</strong><div class="muted" style="margin-top:6px;">{{ text }}</div></div>
-                {% endfor %}
+                
+                  <div style="margin-top:10px;"><strong>linear_search</strong><div class="muted" style="margin-top:6px;">linear_search has time complexity O(n) and space complexity O(1). Low confidence - manual review recommended.</div></div>
+                
+                  <div style="margin-top:10px;"><strong>binary_search</strong><div class="muted" style="margin-top:6px;">binary_search has time complexity O(log n) and space complexity O(1). Uses binary_search, sorting pattern(s). Medium confidence in analysis.</div></div>
+                
               </div>
             </div>
           </div>
@@ -1452,7 +1404,11 @@
             <div class="tab-content" id="methods-notes">
               <div class="card" style="margin-bottom:12px;">
                 <h4>Methods & notes</h4>
-                <div class="muted" style="margin-top:8px; white-space:pre-wrap;">{{ methods_text|safe }}</div>
+                <div class="muted" style="margin-top:8px; white-space:pre-wrap;"><ul>
+<li><strong>Runtime</strong> measured with <code>time.perf_counter()</code>; each (function, n) pair ran 11 times after 2 warmup iterations. GC was enabled and collected before runs.</li>
+<li><strong>Memory</strong> peak measured with <code>rss</code> backend. When <code>rss</code> is selected and <code>psutil</code> is installed, a child process is monitored for RSS (recommended for realistic peak memory).</li>
+<li><strong>Confidence Intervals:</strong> T at 95% confidence.</li>
+</ul></div>
               </div>
             </div>
           </div>
@@ -1487,18 +1443,85 @@
                       </tr>
                     </thead>
                     <tbody>
-                    {% for row in comparison_rows %}
+                    
                       <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
-                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">{{ row.n }}</td>
-                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">{{ row.best_runtime }}</td>
-                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">{{ row.worst_runtime }}</td>
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">1000</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">binary_search</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">linear_search</td>
                         <td style="padding:12px;">
-                          {% for label, r in row.mean_ranks.items() %}
-                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">{{ label }}: {{ "%.2f"|format(r) }}</span>
-                          {% endfor %}
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">linear_search: 1.50</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">binary_search: 1.50</span>
+                          
                         </td>
                       </tr>
-                    {% endfor %}
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">2000</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">linear_search</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">binary_search</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">linear_search: 1.50</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">binary_search: 1.50</span>
+                          
+                        </td>
+                      </tr>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">4000</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">linear_search</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">binary_search</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">linear_search: 1.50</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">binary_search: 1.50</span>
+                          
+                        </td>
+                      </tr>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">8000</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">linear_search</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">binary_search</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">linear_search: 1.50</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">binary_search: 1.50</span>
+                          
+                        </td>
+                      </tr>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">16000</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">binary_search</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">linear_search</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">linear_search: 1.50</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">binary_search: 1.50</span>
+                          
+                        </td>
+                      </tr>
+                    
+                      <tr style="border-bottom:1px solid rgba(66, 133, 244, 0.1); transition:background-color 0.2s;">
+                        <td class="mono" style="padding:12px; font-weight:600; color:var(--accent-primary);">32000</td>
+                        <td style="padding:12px; color:var(--accent-success); font-weight:500;">binary_search</td>
+                        <td style="padding:12px; color:var(--accent-danger); font-weight:500;">linear_search</td>
+                        <td style="padding:12px;">
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">linear_search: 1.50</span>
+                          
+                            <span class="badge" style="background:rgba(66, 133, 244, 0.1); color:var(--accent-primary); border:1px solid rgba(66, 133, 244, 0.2); margin:2px 4px 2px 0; display:inline-block; padding:4px 8px; border-radius:4px;">binary_search: 1.50</span>
+                          
+                        </td>
+                      </tr>
+                    
                     </tbody>
                   </table>
                 </div>
@@ -1708,12 +1731,12 @@
 
     document.getElementById('downloadBtn').addEventListener('click', () => {
       // prefer runtime table CSV
-      const rt = JSON.parse('{{ runtime_table_json | replace("'", "\\'") | replace("\\n","\\n") }}');
+      const rt = JSON.parse('[{"n": 1000, "linear_search": {"mean": 0.12721622354530898, "lower": 0.1050826778629554, "upper": 0.14934976922766258}, "binary_search": {"mean": 0.1263859887274686, "lower": 0.11269342118136332, "upper": 0.14007855627357388}}, {"n": 2000, "linear_search": {"mean": 0.11869460972692733, "lower": 0.11485985436162433, "upper": 0.12252936509223034}, "binary_search": {"mean": 0.12777987890942974, "lower": 0.11488621637187701, "upper": 0.14067354144698246}}, {"n": 4000, "linear_search": {"mean": 0.13264239772681982, "lower": 0.11322338059007306, "upper": 0.15206141486356659}, "binary_search": {"mean": 0.1664813864554162, "lower": 0.10809126633171048, "upper": 0.22487150657912194}}, {"n": 8000, "linear_search": {"mean": 0.12102163645448111, "lower": 0.11561719423175981, "upper": 0.1264260786772024}, "binary_search": {"mean": 0.12199028054502295, "lower": 0.11729335768792039, "upper": 0.1266872034021255}}, {"n": 16000, "linear_search": {"mean": 0.1291289355460983, "lower": 0.09959444332455952, "upper": 0.1586634277676371}, "binary_search": {"mean": 0.11980057181856617, "lower": 0.11591446110474782, "upper": 0.12368668253238452}}, {"n": 32000, "linear_search": {"mean": 0.10490818563663527, "lower": 0.09018310538012847, "upper": 0.11963326589314208}, "binary_search": {"mean": 0.09290874981888919, "lower": 0.09115989450784982, "upper": 0.09465760512992856}}]');
       const csv = jsonToCsv(rt);
       const blob = new Blob([csv], {type: 'text/csv'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = '{{ title | replace(" ","_") }}_runtime.csv'; a.click();
+      a.href = url; a.download = 'Linear_vs_Binary_Search_runtime.csv'; a.click();
       URL.revokeObjectURL(url);
     });
 

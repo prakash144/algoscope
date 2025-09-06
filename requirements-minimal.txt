@@ -1,0 +1,7 @@
+# Minimal dependencies for algoscope
+# These are the absolute minimum required packages for basic functionality
+# Note: Memory measurements will be less accurate without psutil and memory-profiler
+
+jinja2>=3.1.2
+plotly>=5.22.0
+numpy>=1.23.0

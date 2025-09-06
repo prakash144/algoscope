@@ -1,0 +1,20 @@
+# Core dependencies for algoscope
+# These are the minimum required packages for basic functionality
+
+# Template engine for HTML report generation
+jinja2>=3.1.2
+
+# Data visualization and plotting
+plotly>=5.22.0
+
+# Numerical computing
+numpy>=1.23.0
+
+# Memory profiling (optional but recommended for accurate memory measurements)
+psutil>=5.9.0
+memory-profiler>=0.61.0
+
+# Development and testing dependencies (optional)
+# Uncomment these if you want to run tests or development tools
+# pytest>=7.0.0
+# ruff>=0.1.0
