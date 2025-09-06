@@ -36,6 +36,11 @@ class FunctionStats:
     interview_summary: str = ""
     dynamic_guess: Optional[str] = None
     errors: List[str] = field(default_factory=list)
+    # Google SWE interview specific attributes
+    interview_tips: List[str] = field(default_factory=list)
+    optimization_suggestions: List[str] = field(default_factory=list)
+    patterns_detected: List[str] = field(default_factory=list)
+    confidence: Optional[float] = None
 
 
 @dataclass
@@ -203,6 +208,10 @@ def analyze_functions(
             manual_explanation=guess.explanation,
             interview_summary=guess.interview_summary,
             dynamic_guess=guess.dynamic_guess,
+            interview_tips=guess.interview_tips,
+            optimization_suggestions=guess.optimization_suggestions,
+            patterns_detected=guess.patterns_detected,
+            confidence=guess.confidence,
         )
         func_map[label] = f
         picklable_cache[label] = is_picklable(f)
@@ -363,8 +372,23 @@ def analyze_functions(
         r = rank(means)
         for idx, label in enumerate(labels):
             ranks_accum[label].append(r[idx])
-        best_label = labels[int(np.nanargmin(means))]
-        worst_label = labels[int(np.nanargmax(means))]
+        
+        # Handle NaN values in means
+        if all(np.isnan(means)):
+            best_label = "N/A"
+            worst_label = "N/A"
+        else:
+            # Filter out NaN values for comparison
+            valid_means = [m for m in means if not np.isnan(m)]
+            if valid_means:
+                best_idx = np.nanargmin(means)
+                worst_idx = np.nanargmax(means)
+                best_label = labels[best_idx] if not np.isnan(means[best_idx]) else "N/A"
+                worst_label = labels[worst_idx] if not np.isnan(means[worst_idx]) else "N/A"
+            else:
+                best_label = "N/A"
+                worst_label = "N/A"
+        
         comparison_rows.append({"n": n, "best_runtime": best_label, "worst_runtime": worst_label})
 
     mean_ranks = {label: float(np.mean(ranks)) for label, ranks in ranks_accum.items()}
@@ -440,12 +464,32 @@ def analyze_functions(
         f"- **Confidence Intervals:** {ci_method.upper()} at {int(100 * confidence)}% confidence."
     )
 
+    # Extract Google SWE interview specific data
+    interview_tips = {}
+    optimization_suggestions = {}
+    patterns_detected = {}
+    confidence_scores = {}
+    
+    for label, stat in stats.items():
+        if hasattr(stat, 'interview_tips') and stat.interview_tips:
+            interview_tips[label] = stat.interview_tips
+        if hasattr(stat, 'optimization_suggestions') and stat.optimization_suggestions:
+            optimization_suggestions[label] = stat.optimization_suggestions
+        if hasattr(stat, 'patterns_detected') and stat.patterns_detected:
+            patterns_detected[label] = stat.patterns_detected
+        if hasattr(stat, 'confidence') and stat.confidence is not None:
+            confidence_scores[label] = stat.confidence
+
     sections = ReportSections(
         manual_complexities=manual_complexities_full,
         interview_summaries=interview_summaries,
         beginner_summaries=beginner_summaries,
         methods_text=methods_text,
         dynamic_guesses=dynamic_guesses,
+        interview_tips=interview_tips,
+        optimization_suggestions=optimization_suggestions,
+        patterns_detected=patterns_detected,
+        confidence_scores=confidence_scores,
     )
 
     # Optional grid sweep heatmaps

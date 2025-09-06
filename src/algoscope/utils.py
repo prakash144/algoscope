@@ -45,9 +45,10 @@ def t_confidence_interval(samples: Iterable[float], confidence: float = 0.95) ->
     xs = [float(x) for x in samples]
     n = len(xs)
     mean = statistics.fmean(xs) if n > 0 else float("nan")
-    std = statistics.pstdev(xs) if n <= 1 else statistics.stdev(xs)
     if n <= 1:
+        std = 0.0  # No standard deviation for 0 or 1 data points
         return CIResult(mean, std, n, mean, mean, "t")
+    std = statistics.stdev(xs)
     if abs(confidence - 0.95) > 1e-9:
         from statistics import NormalDist
         z = NormalDist().inv_cdf(0.5 + confidence / 2.0)

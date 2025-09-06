@@ -6,6 +6,7 @@ import os
 import sys
 import random
 import warnings
+from algoscope.io import export_results_json
 
 # Prefer local 'src' during development
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -80,3 +81,15 @@ if __name__ == "__main__":
         timeout=10.0,
         run_in_subprocess=True,
     )
+
+    export_results_json(results, "json_result/results.json")
+    
+# - Need UI Suggestions :
+# - 'Complexity Analysis' tabs : Move inside below card i think logically its correct
+#        - Advanced Complexity Analysis
+#        -  Beginner Summaries
+#         -  Interview Summary 
+# - 'Algorithm Comparison' tabs : Move inside below card 
+#         - Algorithm Comparison Summary
+
+# So above mentioned point i have observed so review and fix and also do the needful improvement whatever you think it should required for premium look of UI 

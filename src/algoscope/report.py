@@ -37,7 +37,7 @@ def fig_to_div(fig, include_js: bool = False) -> str:
         include_plotlyjs="cdn" if include_js else False,
         full_html=False,
         default_width="100%",
-        default_height="620px",
+        default_height="750px",  # Increased height for better visibility
     )
 
 
@@ -161,32 +161,39 @@ def simple_markdown_to_html(text: str) -> str:
 def _concise_manual_html(explanation: str) -> str:
     """
     Convert a verbose explanation into a compact HTML summary:
-    - Extract Estimated Time Complexity and Estimated Space Complexity
-    - Extract the first 'Why:' sentence (shortened)
-    - Return a one-paragraph HTML string with a small muted 'Why' line.
+    - Extract Time Complexity and Space Complexity
+    - Extract patterns and confidence information
+    - Return a comprehensive HTML string with Google SWE styling.
     """
     if not explanation:
         return ""
 
     time_o = None
     space_o = None
+    patterns = []
+    confidence = "Medium"
 
-    t_match = re.search(r"\*\*Estimated Time Complexity:\*\*\s*([^\s\*\n]+)", explanation)
-    s_match = re.search(r"\*\*Estimated Space Complexity:\*\*\s*([^\s\*\n]+)", explanation)
-
+    # Extract time and space complexity
+    t_match = re.search(r"\*\*Time Complexity:\*\*\s*([^\n]+)", explanation)
+    s_match = re.search(r"\*\*Space Complexity:\*\*\s*([^\n]+)", explanation)
+    
     if t_match:
         time_o = escape(t_match.group(1).strip())
     if s_match:
         space_o = escape(s_match.group(1).strip())
 
-    why = ""
-    why_m = re.search(r"Why:\s*(.+?)(?:\n\n|$)", explanation, flags=re.S)
-    if why_m:
-        why_raw = why_m.group(1).strip()
-        why = escape(why_raw)
-        if len(why) > 240:
-            why = why[:237].rstrip() + "..."
+    # Extract patterns
+    patterns_match = re.search(r"\*\*Algorithm Patterns Detected:\*\*\s*\n((?:- .+\n?)+)", explanation)
+    if patterns_match:
+        patterns_text = patterns_match.group(1)
+        patterns = [line.strip("- ").strip() for line in patterns_text.split("\n") if line.strip()]
 
+    # Extract confidence
+    conf_match = re.search(r"\*\*Confidence Level:\*\*\s*([^\n]+)", explanation)
+    if conf_match:
+        confidence = conf_match.group(1).strip()
+
+    # Build HTML
     parts = []
     if time_o:
         parts.append(f"<strong>Time</strong>: {time_o}")
@@ -200,8 +207,15 @@ def _concise_manual_html(explanation: str) -> str:
         summary = escape(first_line)
 
     html = f"<p style='margin:6px 0;'>{summary}</p>"
-    if why:
-        html += f"<p class='muted' style='margin:6px 0 0 0; font-size:13px;'>Why: {why}</p>"
+    
+    # Add patterns if available
+    if patterns:
+        patterns_html = " &bull; ".join([f"<span class='badge' style='font-size:10px; padding:2px 6px;'>{p}</span>" for p in patterns[:3]])
+        html += f"<p style='margin:4px 0; font-size:12px;'>{patterns_html}</p>"
+    
+    # Add confidence indicator
+    conf_color = "#10b981" if "High" in confidence else "#f59e0b" if "Medium" in confidence else "#ef4444"
+    html += f"<p style='margin:4px 0; font-size:11px; color:{conf_color};'><strong>Confidence:</strong> {confidence}</p>"
 
     return html
 
@@ -214,6 +228,11 @@ class ReportSections:
     methods_text: str
     # optional dynamic_guesses may be added at runtime
     dynamic_guesses: Optional[Dict[str, str]] = None
+    # Google SWE interview specific content
+    interview_tips: Optional[Dict[str, List[str]]] = None
+    optimization_suggestions: Optional[Dict[str, List[str]]] = None
+    patterns_detected: Optional[Dict[str, List[str]]] = None
+    confidence_scores: Optional[Dict[str, float]] = None
 
 
 def build_report_html(
